@@ -15,8 +15,8 @@ import java.util.Random;
 
 public class Card {
     private final RectF posRect = new RectF();
-    private static final float CARD_WIDTH = (float) 434 / 170;
-    private static final float CARD_HEIGHT = (float) 524 / 170;
+    private static final int CARD_IMAGE_WIDTH = 434;
+    private static final int CARD_IMAGE_HEIGHT = 524;
 
     private static final Random random = new Random();
     public static Card random(){
@@ -24,8 +24,10 @@ public class Card {
                 random.nextFloat() * GameView.SCREEN_HEIGHT);
     }
     public Card(float centerX, float centerY) {
-        posRect.set(centerX - CARD_WIDTH/2, centerY - CARD_HEIGHT/2,
-                centerX + CARD_WIDTH/2, centerY + CARD_HEIGHT/2);
+        float cardWidth = 2;
+        float cardHeight = (float) CARD_IMAGE_HEIGHT / CARD_IMAGE_WIDTH * cardWidth;
+        posRect.set(centerX - cardWidth/2, centerY - (cardHeight)/2,
+                centerX + cardWidth/2, centerY + cardHeight/2);
     }
 
     private static Bitmap bitmap;
