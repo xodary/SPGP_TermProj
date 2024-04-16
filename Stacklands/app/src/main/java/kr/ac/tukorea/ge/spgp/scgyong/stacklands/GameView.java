@@ -24,6 +24,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import java.util.ArrayList;
 
+enum eCardPack {pack_a_new_world, pack_curious_cuisine, };
 public class GameView extends View implements Choreographer.FrameCallback {
     private static final String TAG = GameView.class.getSimpleName();private final Activity activity;
     public static final float SCREEN_WIDTH = 9.0f;
@@ -45,11 +46,12 @@ public class GameView extends View implements Choreographer.FrameCallback {
         setFullScreen();
 
         Resources res = getResources();
+
         Bitmap appleBitmap = BitmapFactory.decodeResource(res, R.mipmap.apple);
         Card.setBitmap(appleBitmap);
 
         for (int i = 0; i < 1; i++) {
-            cards.add(new Card(4.5f, 8.0f));
+            cards.add(new Card());
         }
 
     }

@@ -1,10 +1,10 @@
 package kr.ac.tukorea.ge.spgp.scgyong.stacklands;
 
 public class NotAlive extends Card {
-    private int price;
+    private int sellPrice;
 
-    public NotAlive(float centerX, float centerY, int price) {
-        super(centerX, centerY);
-        this.price = price;
+    public NotAlive(int price) {
+        super();
+        this.sellPrice = price;
     }
 }
