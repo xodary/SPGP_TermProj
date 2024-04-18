@@ -8,3 +8,16 @@ public class Alive extends Card {
         this.life = life;
     }
 }
+
+class RedCard extends Alive {
+    public RedCard(int life) {
+        super(life);
+    }
+}
+
+
+class YellowCard extends Alive {
+    public YellowCard(int life) {
+        super(life);
+    }
+}

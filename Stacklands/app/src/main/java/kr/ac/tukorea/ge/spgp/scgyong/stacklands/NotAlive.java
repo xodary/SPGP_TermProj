@@ -8,3 +8,16 @@ public class NotAlive extends Card {
         this.sellPrice = price;
     }
 }
+
+class BlackCard extends NotAlive{
+    public BlackCard(int price) {
+        super(price);
+    }
+}
+
+class SilverCard extends NotAlive{
+    public SilverCard(int price) {
+        super(price);
+    }
+}
+

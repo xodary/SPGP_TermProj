@@ -13,7 +13,7 @@ public class CardPack extends Card {
         this.buyPrice = buyPrice;
     }
 
-    public static CardPack PushCard(Card c){
+    public CardPack PushCard(Card c){
         cards.add(c);
         return this;
     }

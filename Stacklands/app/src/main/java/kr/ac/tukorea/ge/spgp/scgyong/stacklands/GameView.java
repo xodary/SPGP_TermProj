@@ -14,6 +14,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.view.Choreographer;
+import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.activity.EdgeToEdge;
@@ -23,6 +24,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import java.util.ArrayList;
+
 
 enum eCardPack {pack_a_new_world, pack_curious_cuisine, };
 public class GameView extends View implements Choreographer.FrameCallback {
@@ -34,6 +36,7 @@ public class GameView extends View implements Choreographer.FrameCallback {
     private final RectF borderRect = new RectF(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     private final Paint borderPaint;
 
+    // public static final Resources res = null;
     public GameView(Context context) {
         super(context);
         this.activity = (Activity)context;
@@ -47,13 +50,7 @@ public class GameView extends View implements Choreographer.FrameCallback {
 
         Resources res = getResources();
 
-        Bitmap appleBitmap = BitmapFactory.decodeResource(res, R.mipmap.apple);
-        Card.setBitmap(appleBitmap);
-
-        for (int i = 0; i < 1; i++) {
-            cards.add(new Card());
-        }
-
+        cards.add(SilverCardManager.getInstance().GetStone(res));
     }
 
     private void scheduleUpdate() {
@@ -115,5 +112,45 @@ public class GameView extends View implements Choreographer.FrameCallback {
             card.draw(canvas);
         }
         canvas.restore();
+    }
+
+    float oldX = 0;
+    float oldY = 0;
+    private Card clickingCard;
+    public boolean onTouchEvent(MotionEvent event) {
+        super.onTouchEvent(event);
+        final float x = event.getX();
+        final float y = event.getY();
+        final int action = event.getAction();
+
+        if(clickingCard != null){
+            float dx = x - oldX;
+            float dy = y - oldY;
+
+            clickingCard.Move(dx, dy);
+
+            oldX = x;
+            oldY = y;
+        }
+        else {
+            oldX = x;
+            oldY = y;
+            for (Card card : cards) {
+                if (card.inRect(x, y)) {
+                    clickingCard = card;
+                    clickingCard.bClick = true;
+                    return true;
+                }
+            }
+        }
+
+        if (action == MotionEvent.ACTION_UP) {
+            if (clickingCard != null) {
+                clickingCard.bClick = false;
+                clickingCard = null;
+            }
+        }
+
+        return false;
     }
 }
