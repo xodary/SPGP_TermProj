@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.spgp.scgyong.stacklands;
+package kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Managers;
 
 
 import android.content.res.Resources;
@@ -6,6 +6,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import java.util.ArrayList;
+
+import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.BlackCard;
+import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.Card;
+import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.CardPack;
+import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.CoinCard;
+import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.SilverCard;
+import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.YellowCard;
+import kr.ac.tukorea.ge.spgp.scgyong.stacklands.R;
+import kr.ac.tukorea.ge.spgp.scgyong.stacklands.eCardPack;
 
 public class CardManager {
     public CardManager() {
@@ -92,7 +101,7 @@ class CardPackManager extends CardManager {
         cardpacks.add(card);
     }
 }
-class SilverCardManager extends CardManager {
+public class SilverCardManager extends CardManager {
 
     private static SilverCardManager instance;
     public static SilverCardManager getInstance() {

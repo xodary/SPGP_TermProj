@@ -1,7 +1,10 @@
-package kr.ac.tukorea.ge.spgp.scgyong.stacklands;
+package kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards;
 
 import java.util.ArrayList;
 import android.content.res.Resources;
+
+import kr.ac.tukorea.ge.spgp.scgyong.stacklands.R;
+import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Managers.SilverCardManager;
 
 public class Recipe {
     protected final ArrayList<Integer> resourceNames = new ArrayList<>();

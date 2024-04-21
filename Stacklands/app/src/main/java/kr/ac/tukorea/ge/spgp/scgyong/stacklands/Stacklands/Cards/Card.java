@@ -1,17 +1,8 @@
-package kr.ac.tukorea.ge.spgp.scgyong.stacklands;
+package kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards;
 
-import static java.lang.Math.random;
-
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.RectF;
-import android.util.Log;
-
-import java.util.Random;
 
 public class Card {
     public final RectF posRect = new RectF();

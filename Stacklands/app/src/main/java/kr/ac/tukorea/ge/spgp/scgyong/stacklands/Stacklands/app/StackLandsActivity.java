@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.spgp.scgyong.stacklands;
+package kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.app;
 
 import android.os.Bundle;
 
@@ -8,13 +8,15 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class GameActivity extends AppCompatActivity {
+import kr.ac.tukorea.ge.spgp.scgyong.stacklands.R;
+import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.MainScene;
+import kr.ac.tukorea.ge.spgp.scgyong.stacklands.framework.activity.GameActivity;
+
+public class StackLandsActivity extends GameActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        GameView gameView = new GameView(this);
-        //gameView.setFullScreen();
-        setContentView(gameView);
+        new MainScene().push();
     }
 }

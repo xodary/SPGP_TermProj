@@ -1,29 +1,23 @@
-package kr.ac.tukorea.ge.spgp.scgyong.stacklands;
+package kr.ac.tukorea.ge.spgp.scgyong.stacklands.framework.view;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.RectF;
-import android.os.Bundle;
 import android.view.Choreographer;
 import android.view.MotionEvent;
 import android.view.View;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
 import java.util.ArrayList;
+
+import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.Card;
+import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Managers.SilverCardManager;
+import kr.ac.tukorea.ge.spgp.scgyong.stacklands.framework.scene.Scene;
 
 
 enum eCardPack {pack_a_new_world, pack_curious_cuisine, };
@@ -35,8 +29,7 @@ public class GameView extends View implements Choreographer.FrameCallback {
     private final ArrayList<Card> cards = new ArrayList<>();
     private final RectF borderRect = new RectF(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     private final Paint borderPaint;
-
-    // public static final Resources res = null;
+    public static Resources res;
     public GameView(Context context) {
         super(context);
         this.activity = (Activity)context;
@@ -56,6 +49,8 @@ public class GameView extends View implements Choreographer.FrameCallback {
     private void scheduleUpdate() {
         Choreographer.getInstance().postFrameCallback(this);
     }
+    private boolean running = true;
+    private long previousNanos = 0;
     @Override
     public void doFrame(long nanos) {
         update();
@@ -117,40 +112,77 @@ public class GameView extends View implements Choreographer.FrameCallback {
     float oldX = 0;
     float oldY = 0;
     private Card clickingCard;
+
     public boolean onTouchEvent(MotionEvent event) {
-        super.onTouchEvent(event);
-        final float x = event.getX();
-        final float y = event.getY();
-        final int action = event.getAction();
-
-        if(clickingCard != null){
-            float dx = x - oldX;
-            float dy = y - oldY;
-
-            clickingCard.Move(dx, dy);
-
-            oldX = x;
-            oldY = y;
+        Scene scene = Scene.top();
+        if (scene != null) {
+            boolean handled = scene.onTouch(event);
+            if (handled) return true;
         }
-        else {
-            oldX = x;
-            oldY = y;
-            for (Card card : cards) {
-                if (card.inRect(x, y)) {
-                    clickingCard = card;
-                    clickingCard.bClick = true;
-                    return true;
-                }
-            }
+        return super.onTouchEvent(event);
+    }
+//    public boolean onTouchEvent(MotionEvent event) {
+//        super.onTouchEvent(event);
+//        final float x = event.getX();
+//        final float y = event.getY();
+//        final int action = event.getAction();
+//
+//        if(clickingCard != null){
+//            float dx = x - oldX;
+//            float dy = y - oldY;
+//
+//            clickingCard.Move(dx, dy);
+//
+//            oldX = x;
+//            oldY = y;
+//        }
+//        else {
+//            oldX = x;
+//            oldY = y;
+//            for (Card card : cards) {
+//                if (card.inRect(x, y)) {
+//                    clickingCard = card;
+//                    clickingCard.bClick = true;
+//                    return true;
+//                }
+//            }
+//        }
+//
+//        if (action == MotionEvent.ACTION_UP) {
+//            if (clickingCard != null) {
+//                clickingCard.bClick = false;
+//                clickingCard = null;
+//            }
+//        }
+//
+//        return false;
+//    }
+    public void onBackPressed() {
+        Scene scene = Scene.top();
+        if (scene == null) {
+            Scene.finishActivity();
+            return;
         }
+        boolean handled = scene.onBackPressed();
+        if (handled) return;
 
-        if (action == MotionEvent.ACTION_UP) {
-            if (clickingCard != null) {
-                clickingCard.bClick = false;
-                clickingCard = null;
-            }
-        }
+        Scene.pop();
+    }
 
-        return false;
+    public void pauseGame() {
+        running = false;
+        Scene.pauseTop();
+    }
+
+    public void resumeGame() {
+        if (running) return;
+        running = true;
+        previousNanos = 0;
+        scheduleUpdate();
+        Scene.resumeTop();
+    }
+
+    public void destroyGame() {
+        Scene.popAll();
     }
 }

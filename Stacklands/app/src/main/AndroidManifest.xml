@@ -13,12 +13,14 @@
         android:theme="@style/Theme.StackLands"
         tools:targetApi="31">
         <activity
-            android:name=".GameActivity"
-            android:configChanges="orientation|screenSize"
-            android:exported="false"
-            />
+            android:name=".Stacklands.app.StackLandsActivity"
+            android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".app.MainActivity"
+            android:configChanges="orientation|screenSize"
+            android:exported="false" />
+        <activity
+            android:name=".Stacklands.app.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
