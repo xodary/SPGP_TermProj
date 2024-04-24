@@ -4,13 +4,16 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.RectF;
 
-public class Card {
+import kr.ac.tukorea.ge.spgp.scgyong.stacklands.framework.objects.Sprite;
+
+public class Card extends Sprite {
     public final RectF posRect = new RectF();
     public static final int CARD_IMAGE_WIDTH = 434;
     public static final int CARD_IMAGE_HEIGHT = 524;
     public boolean bClick = false;
 
-    public Card() {
+    public Card(int mipmapID) {
+        super(mipmapID);
         SetPosition(4.5f, 8.0f);
     }
 

@@ -1,11 +1,9 @@
 package kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards;
 
-class RedCard extends Card {
+public class YellowCard extends Card {
     int life;
-    public RedCard(int mipmapID, int life) {
+    public YellowCard(int mipmapID, int life) {
         super(mipmapID);
         this.life = life;
     }
 }
-
-

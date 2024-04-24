@@ -1,44 +1,18 @@
 package kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards;
 
-import java.util.ArrayList;
-import android.content.res.Resources;
 
-import kr.ac.tukorea.ge.spgp.scgyong.stacklands.R;
-import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Managers.SilverCardManager;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
 public class Recipe {
-    protected final ArrayList<Integer> resourceNames = new ArrayList<>();
-    private Card resultCard;
+    protected HashMap<ArrayList<String>, String> recipes = new HashMap<>();
+
+    public void addCardPack(String result, String... materials) {
+        recipes.put((ArrayList<String>) Arrays.asList(materials), result);
+    }
+
     public Recipe() {
-    }
-
-    public void init(){
-
-    }
-
-    public Recipe addMaterial(int material){
-        resourceNames.add(material);
-        return this;
-    }
-
-    public Recipe setResult(Card card){
-        resultCard = card;
-        return this;
-    }
-
-    public Card getResult(){ return resultCard; }
-}
-
-class RecipeManager{
-    protected final ArrayList<Recipe> recipes = new ArrayList<>();
-    public RecipeManager(){
-
-    }
-
-    public void init(Resources res){
-        recipes.add(new Recipe()
-                .addMaterial(R.mipmap.black_rock)
-                .addMaterial(R.mipmap.yellow_villager)
-                .setResult(SilverCardManager.getInstance().GetStone(res)));
+        addCardPack("berry", "village", "berry_bush");
     }
 }

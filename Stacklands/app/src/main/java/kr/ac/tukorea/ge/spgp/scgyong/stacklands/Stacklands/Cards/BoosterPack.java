@@ -2,18 +2,16 @@ package kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards;
 
 import java.util.ArrayList;
 
-public class CardPack extends Card {
-    private int nCard;
+public class BoosterPack extends Card {
     private int buyPrice;
     protected final ArrayList<Card> cards = new ArrayList<>();
 
-    public CardPack(int nCard, int buyPrice) {
-        super();
-        this.nCard = nCard;
+    public BoosterPack(int mipmapID, int buyPrice) {
+        super(mipmapID);
         this.buyPrice = buyPrice;
     }
 
-    public CardPack PushCard(Card c){
+    public BoosterPack PushCard(Card c){
         cards.add(c);
         return this;
     }

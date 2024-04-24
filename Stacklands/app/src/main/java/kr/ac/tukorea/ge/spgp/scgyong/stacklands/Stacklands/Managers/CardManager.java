@@ -1,226 +1,109 @@
 package kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Managers;
 
-
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.function.Supplier;
 
-import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.BlackCard;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.Card;
-import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.CardPack;
-import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.CoinCard;
-import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.SilverCard;
-import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.YellowCard;
+import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.BoosterPack;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.R;
-import kr.ac.tukorea.ge.spgp.scgyong.stacklands.eCardPack;
+import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.SilverCard;
 
 public class CardManager {
+    private static CardManager instance;
+
+
+    public static CardManager getInstance() {
+        if (instance == null) {
+            instance = new CardManager();
+        }
+        return instance;
+    }
+    public HashMap<String, Supplier<Card>> cardSupplier = new HashMap<>();
     public CardManager() {
+        cardSupplier.put("stone", () -> new SilverCard(R.mipmap.silver_stone, 1));
+        cardSupplier.put("wood", () -> new SilverCard(R.mipmap.silver_wood, 1));
+        cardSupplier.put("flint", () -> new SilverCard(R.mipmap.silver_flint, 2));
+        cardSupplier.put("stick", () -> new SilverCard(R.mipmap.silver_stick, 2));
+        cardSupplier.put("boosterPack_ANewWorld", () -> new BoosterPack(R.mipmap.pack_a_new_world, 0));
+        cardSupplier.put("boosterPack_CuriousCuisine", () -> new BoosterPack(R.mipmap.pack_curious_cuisine, 3));
     }
 
-    public void init(Resources res){
-
+    public Card CreateCard(String str) {
+        Supplier<Card> supplier = () -> new Card(0);
+        return cardSupplier.getOrDefault(str, supplier).get();
     }
 }
 
-class CardPackManager extends CardManager {
-    protected final ArrayList<CardPack> cardpacks = new ArrayList<>();
-    public CardPackManager() {
-        super();
+class Pair {
+    private String name;
+    private Float rate;
+
+    public Pair(String first, Float second) {
+        this.name = first;
+        this.rate = second;
     }
 
-    public void init(Resources res) {
-        InitHumbleBeginnings(res);
-        InitANewWorld(res);
-        InitCuriousCuisine(res);
-        InitExplorers(res);
-        InitLogicAndReason(res);
-        InitOrderAndStructure(res);
-        InitReapAndSow(res);
-        InitTheArmory(res);
-        InitSeekingWisdom(res);
+    public String getName() {
+        return name;
     }
 
-    public Card GetCardPack(eCardPack cardName) {
-        return cardpacks.get(cardName.ordinal());
-    }
-
-    private CardPack GetterMachine(Resources res, int imageID, int nCard, int buyPrice){
-        Bitmap bitmap = BitmapFactory.decodeResource(res, imageID);
-        CardPack card = new CardPack(nCard, buyPrice);
-        card.setBitmap(bitmap);
-        return card;
-    }
-
-    private void InitANewWorld(Resources res){
-        CardPack card = GetterMachine(res, R.mipmap.pack_a_new_world, 5, 0);
-        card.PushCard(SilverCardManager.getInstance().GetWood(res));
-        card.PushCard(BlackCardManager.getInstance().GetRock(res));
-        card.PushCard(BlackCardManager.getInstance().GetBerryBush(res));
-        card.PushCard(YellowCardManager.getInstance().GetVilliger(res));
-        card.PushCard(GoldCardManager.getInstance().GetCoin(res));
-        cardpacks.add(card);
-
-    }
-
-    private void InitCuriousCuisine(Resources res){
-        CardPack card = GetterMachine(res, R.mipmap.pack_curious_cuisine, 3, 10);
-        cardpacks.add(card);
-    }
-
-    private void InitExplorers(Resources res){
-        CardPack card = GetterMachine(res, R.mipmap.pack_explorers, 3, 20);
-        cardpacks.add(card);
-    }
-
-    private void InitHumbleBeginnings(Resources res){
-        CardPack card = GetterMachine(res, R.mipmap.pack_humble_beginnnings, 3, 3);
-        cardpacks.add(card);
-    }
-    private void InitLogicAndReason(Resources res){
-        CardPack card = GetterMachine(res, R.mipmap.pack_logic_and_reason, 4, 15);
-        cardpacks.add(card);
-    }
-    private void InitOrderAndStructure(Resources res){
-        CardPack card = GetterMachine(res, R.mipmap.pack_order_and_structure, 4, 25);
-        cardpacks.add(card);
-    }
-
-    private void InitReapAndSow(Resources res){
-        CardPack card = GetterMachine(res, R.mipmap.pack_reap_and_sow, 4, 10);
-        cardpacks.add(card);
-    }
-    private void InitSeekingWisdom(Resources res){
-        CardPack card = GetterMachine(res, R.mipmap.pack_seeking_wisdom, 4, 4);
-        cardpacks.add(card);
-    }
-    private void InitTheArmory(Resources res){
-        CardPack card = GetterMachine(res, R.mipmap.pack_the_armory, 3, 15);
-        cardpacks.add(card);
+    public Float getRate() {
+        return rate;
     }
 }
-public class SilverCardManager extends CardManager {
 
-    private static SilverCardManager instance;
-    public static SilverCardManager getInstance() {
-        if (instance == null) {
-            instance = new SilverCardManager();
+class BoosterPackManager {
+    protected final HashMap<String, ArrayList<ArrayList<Pair>>> boosterpacks = new HashMap<>();
+    public BoosterPackManager() {
+        addCardPack("boosterPack_ANewWorld",
+                CreatePairArrayList(new Pair("wood", 1.0f)),
+                CreatePairArrayList(new Pair("rock", 1.0f)),
+                CreatePairArrayList(new Pair("berry_bush", 1.0f)),
+                CreatePairArrayList(new Pair("villager", 1.0f)),
+                CreatePairArrayList(new Pair("coin", 1.0f)));
+
+        for (Map.Entry<String, ArrayList<ArrayList<Pair>>> entry : boosterpacks.entrySet()) {
+            String key = entry.getKey();
+            ArrayList<ArrayList<Pair>> values = entry.getValue();
+
+            BoosterPack card = (BoosterPack) CardManager.getInstance().CreateCard(key);
+            for(ArrayList<Pair> node : values){
+                card.PushCard(CardManager.getInstance().CreateCard(selectItemWithProbability(node)));
+            }
         }
-        return instance;
-    }
-    public SilverCardManager() {
     }
 
-    private SilverCard GetterMachine(Resources res, int imageID, int price){
-        Bitmap bitmap = BitmapFactory.decodeResource(res, imageID);
-        SilverCard card = new SilverCard(price);
-        card.setBitmap(bitmap);
-        return card;
-    }
-    public SilverCard GetStone(Resources res){
-        return GetterMachine(res, R.mipmap.silver_stone, 1);
+    private void addCardPack(String key, ArrayList<Pair>... images) {
+        boosterpacks.put(key, (ArrayList<ArrayList<Pair>>) Arrays.asList(images));
     }
 
-    public SilverCard GetFlint(Resources res){
-        return GetterMachine(res, R.mipmap.silver_flint, 2);
+    private ArrayList<Pair> CreatePairArrayList(Pair... datas) {
+        return (ArrayList<Pair>) Arrays.asList(datas);
     }
 
-    public SilverCard GetStick(Resources res){
-        return GetterMachine(res, R.mipmap.silver_stick, 2);
-    }
-
-    public SilverCard GetWood(Resources res){
-        return GetterMachine(res, R.mipmap.silver_wood, 1);
-    }
-}
-
-class BlackCardManager extends CardManager {
-
-    private static BlackCardManager instance;
-
-    public static BlackCardManager getInstance() {
-        if (instance == null) {
-            instance = new BlackCardManager();
+    public static String selectItemWithProbability(ArrayList<Pair> probabilities) {
+        // 각 항목의 누적 확률을 계산합니다.
+        ArrayList<Float> cumulativeProbabilities = new ArrayList<>();
+        float cumulativeProbability = 0;
+        for (Pair probability : probabilities) {
+            cumulativeProbability += probability.getRate();
+            cumulativeProbabilities.add(cumulativeProbability);
         }
-        return instance;
-    }
 
-    public BlackCardManager() {
-    }
+        // 0과 1 사이의 임의의 숫자를 생성합니다.
+        Random rand = new Random();
+        float randomValue = rand.nextFloat();
 
-    private BlackCard GetterMachine(Resources res, int imageID, int price){
-        Bitmap bitmap = BitmapFactory.decodeResource(res, imageID);
-        BlackCard card = new BlackCard(price);
-        card.setBitmap(bitmap);
-        return card;
-    }
-
-    public BlackCard GetRock(Resources res){
-        return GetterMachine(res, R.mipmap.black_rock, 0);
-    }
-
-    public BlackCard GetTree(Resources res){
-        return GetterMachine(res, R.mipmap.black_tree, 0);
-    }
-
-    public BlackCard GetBerryBush(Resources res){
-        return GetterMachine(res, R.mipmap.black_berry_bush, 1);
-    }
-
-    public BlackCard GetAppleTree(Resources res){
-        return GetterMachine(res, R.mipmap.black_apple_tree, 0);
-    }
-}
-
-class YellowCardManager extends CardManager {
-
-    private static YellowCardManager instance;
-
-    public static YellowCardManager getInstance() {
-        if (instance == null) {
-            instance = new YellowCardManager();
+        // 임의의 숫자가 누적 확률에 속하는 항목을 찾습니다.
+        for (int i = 0; i < cumulativeProbabilities.size(); i++) {
+            if (randomValue < cumulativeProbabilities.get(i)) {
+                return probabilities.get(i).getName();
+            }
         }
-        return instance;
-    }
-
-    public YellowCardManager() {
-    }
-
-    private YellowCard GetterMachine(Resources res, int imageID, int life){
-        Bitmap bitmap = BitmapFactory.decodeResource(res, imageID);
-        YellowCard card = new YellowCard(life);
-        card.setBitmap(bitmap);
-        return card;
-    }
-
-    public YellowCard GetVilliger(Resources res) {
-        return GetterMachine(res, R.mipmap.yellow_villager, 15);
-    }
-}
-
-class GoldCardManager extends CardManager {
-
-    private static GoldCardManager instance;
-
-    public static GoldCardManager getInstance() {
-        if (instance == null) {
-            instance = new GoldCardManager();
-        }
-        return instance;
-    }
-
-    public GoldCardManager() {
-    }
-
-    private CoinCard GetterMachine(Resources res, int imageID){
-        Bitmap bitmap = BitmapFactory.decodeResource(res, imageID);
-        CoinCard card = new CoinCard();
-        card.setBitmap(bitmap);
-        return card;
-    }
-    public CoinCard GetCoin(Resources res){
-        return GetterMachine(res, R.mipmap.gold_coin);
+        return "Error";
     }
 }
