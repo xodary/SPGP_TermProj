@@ -14,12 +14,12 @@ import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.Card;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.MainScene;
 
 public class CardManager implements IGameObject {
+
     private static final String TAG = CardManager.class.getSimpleName();
     private final MainScene scene;
     private final ArrayList<Card> cards = new ArrayList<>();
     public Card clickingCard = null;
     public RecipeManager recipeManager = new RecipeManager();
-
     public CardManager(MainScene scene) {
         this.scene = scene;
         // cards.add(CardGenerator.getInstance().CreateCard("boosterPack_ANewWorld"));
@@ -40,11 +40,17 @@ public class CardManager implements IGameObject {
 
     @Override
     public void update(float elapsedSeconds) {
-        if(clickingCard != null) {
-            //Card c = isCollided();
-            //if (c != null) c.collided();
-        }
         recipeManager.update(elapsedSeconds);
+        for(Card c : recipeManager.cards){
+            cards.add(c);
+            scene.add(MainScene.Layer.Card, c);
+        }
+        recipeManager.cards.clear();
+
+        if(clickingCard != null){
+            Card c = isCollided();
+            if(c != null) c.collided();
+        }
     }
 
     @Override
@@ -69,8 +75,10 @@ public class CardManager implements IGameObject {
             case MotionEvent.ACTION_UP:
                 if (clickingCard != null){
                     Card c = isCollided();
-                    Log.d(TAG, "Collision !!");
-                    if(c != null) clickingCard.collide(c);
+                    if(c != null) {
+                        clickingCard.collide(c);
+                        recipeManager.findRecipe(c, clickingCard);
+                    }
                     clickingCard.clicking = false;
                     clickingCard = null;
                     return true;
@@ -91,11 +99,10 @@ public class CardManager implements IGameObject {
                     }
                     return false;
                 }
-                return false;
             case MotionEvent.ACTION_MOVE:
                 if(clickingCard != null && clickingCard.onTouch(event)) {
-                    //Card c = isCollided();
-                    //if(c != null) c.collided();
+                    Card c = isCollided();
+                    if(c != null) c.collided();
                     return true;
                 }
                 return false;
@@ -108,7 +115,6 @@ public class CardManager implements IGameObject {
             Card c = cards.get(i);
             if(c == clickingCard) continue;
             if (CollisionHelper.collides(c, clickingCard)) {
-                recipeManager.findRecipe(c, clickingCard);
                 return c;
             }
         }
