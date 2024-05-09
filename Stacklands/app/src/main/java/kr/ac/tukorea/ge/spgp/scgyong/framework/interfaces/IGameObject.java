@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.spgp.scgyong.stacklands.framework.interfaces;
+package kr.ac.tukorea.ge.spgp.scgyong.framework.interfaces;
 
 import android.graphics.Canvas;
 

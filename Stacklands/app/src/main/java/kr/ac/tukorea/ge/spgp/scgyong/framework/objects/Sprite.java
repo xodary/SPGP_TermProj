@@ -1,12 +1,12 @@
-package kr.ac.tukorea.ge.spgp.scgyong.stacklands.framework.objects;
+package kr.ac.tukorea.ge.spgp.scgyong.framework.objects;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.util.Log;
 
-import kr.ac.tukorea.ge.spgp.scgyong.stacklands.framework.interfaces.IGameObject;
-import kr.ac.tukorea.ge.spgp.scgyong.stacklands.framework.res.BitmapPool;
+import kr.ac.tukorea.ge.spgp.scgyong.framework.interfaces.IGameObject;
+import kr.ac.tukorea.ge.spgp.scgyong.framework.res.BitmapPool;
 
 public class Sprite implements IGameObject {
     private static final String TAG = Sprite.class.getSimpleName();
@@ -36,6 +36,15 @@ public class Sprite implements IGameObject {
         radius = Math.min(width, height) / 2;
         dstRect.set(x - width / 2, y - height / 2, x + width / 2, y + height / 2);
     }
+
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
     @Override
     public void update(float elapsedSeconds) {
         float timedDx = dx * elapsedSeconds;

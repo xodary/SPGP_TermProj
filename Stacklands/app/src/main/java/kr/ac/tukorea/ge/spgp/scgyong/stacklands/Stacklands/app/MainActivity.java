@@ -10,9 +10,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.app.StackLandsActivity;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.R;
-import kr.ac.tukorea.ge.spgp.scgyong.stacklands.framework.interfaces.IGameObject;
 
 public class MainActivity extends AppCompatActivity {
 

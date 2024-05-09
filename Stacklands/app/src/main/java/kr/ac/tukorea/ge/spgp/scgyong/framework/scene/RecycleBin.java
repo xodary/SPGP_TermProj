@@ -1,9 +1,9 @@
-package kr.ac.tukorea.ge.spgp.scgyong.stacklands.framework.scene;
+package kr.ac.tukorea.ge.spgp.scgyong.framework.scene;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import kr.ac.tukorea.ge.spgp2024.framework.interfaces.IRecyclable;
+import kr.ac.tukorea.ge.spgp.scgyong.framework.interfaces.IRecyclable;
 
 public class RecycleBin {
     private static final String TAG = RecycleBin.class.getSimpleName();

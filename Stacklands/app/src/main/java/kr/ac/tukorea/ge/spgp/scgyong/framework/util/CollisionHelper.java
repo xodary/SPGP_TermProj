@@ -1,8 +1,8 @@
-package kr.ac.tukorea.ge.spgp.scgyong.stacklands.framework.util;
+package kr.ac.tukorea.ge.spgp.scgyong.framework.util;
 
 import android.graphics.RectF;
 
-import kr.ac.tukorea.ge.spgp.scgyong.stacklands.framework.interfaces.IBoxCollidable;
+import kr.ac.tukorea.ge.spgp.scgyong.framework.interfaces.IBoxCollidable;
 
 public class CollisionHelper {
     public static boolean collides(IBoxCollidable obj1, IBoxCollidable obj2) {

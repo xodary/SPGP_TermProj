@@ -1,11 +1,11 @@
-package kr.ac.tukorea.ge.spgp.scgyong.stacklands.framework.activity;
+package kr.ac.tukorea.ge.spgp.scgyong.framework.activity;
 
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
-import kr.ac.tukorea.ge.spgp.scgyong.stacklands.framework.view.GameView;
+import kr.ac.tukorea.ge.spgp.scgyong.framework.view.GameView;
 
 public class GameActivity extends AppCompatActivity {
 

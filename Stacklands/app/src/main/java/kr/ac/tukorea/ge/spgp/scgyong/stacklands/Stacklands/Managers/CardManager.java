@@ -1,109 +1,117 @@
 package kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Managers;
 
+import android.graphics.Canvas;
+import android.util.Log;
+import android.view.MotionEvent;
+
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.function.Supplier;
 
+import kr.ac.tukorea.ge.spgp.scgyong.framework.interfaces.IGameObject;
+import kr.ac.tukorea.ge.spgp.scgyong.framework.scene.Scene;
+import kr.ac.tukorea.ge.spgp.scgyong.framework.util.CollisionHelper;
+import kr.ac.tukorea.ge.spgp.scgyong.framework.view.Metrics;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.Card;
-import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.BoosterPack;
-import kr.ac.tukorea.ge.spgp.scgyong.stacklands.R;
-import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.SilverCard;
+import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.MainScene;
 
-public class CardManager {
-    private static CardManager instance;
+public class CardManager implements IGameObject {
+    private static final String TAG = CardManager.class.getSimpleName();
+    private final MainScene scene;
+    private final ArrayList<Card> cards = new ArrayList<>();
+    public Card clickingCard = null;
+    public RecipeManager recipeManager = new RecipeManager();
 
+    public CardManager(MainScene scene) {
+        this.scene = scene;
+        // cards.add(CardGenerator.getInstance().CreateCard("boosterPack_ANewWorld"));
+        addCard("boosterPack_ANewWorld",0,0);
+        addCard("flint",3,0);
+        addCard("villager",0,5);
+        addCard("berry_bush",-3,0);
+        addCard("berry",-3,-5);
+    }
 
-    public static CardManager getInstance() {
-        if (instance == null) {
-            instance = new CardManager();
+    public void addCard(String str, float offsetX, float offsetY){
+        Card c = CardGenerator.getInstance().CreateCard(str);
+        c.setPosition(Metrics.width / 2 - offsetX, Metrics.height / 2 - offsetY,
+                Card.CARD_WIDTH, Card.CARD_HEIGHT);
+        cards.add(c);
+        scene.add(MainScene.Layer.Card, c);
+    }
+
+    @Override
+    public void update(float elapsedSeconds) {
+        if(clickingCard != null) {
+            //Card c = isCollided();
+            //if (c != null) c.collided();
         }
-        return instance;
-    }
-    public HashMap<String, Supplier<Card>> cardSupplier = new HashMap<>();
-    public CardManager() {
-        cardSupplier.put("stone", () -> new SilverCard(R.mipmap.silver_stone, 1));
-        cardSupplier.put("wood", () -> new SilverCard(R.mipmap.silver_wood, 1));
-        cardSupplier.put("flint", () -> new SilverCard(R.mipmap.silver_flint, 2));
-        cardSupplier.put("stick", () -> new SilverCard(R.mipmap.silver_stick, 2));
-        cardSupplier.put("boosterPack_ANewWorld", () -> new BoosterPack(R.mipmap.pack_a_new_world, 0));
-        cardSupplier.put("boosterPack_CuriousCuisine", () -> new BoosterPack(R.mipmap.pack_curious_cuisine, 3));
+        recipeManager.update(elapsedSeconds);
     }
 
-    public Card CreateCard(String str) {
-        Supplier<Card> supplier = () -> new Card(0);
-        return cardSupplier.getOrDefault(str, supplier).get();
-    }
-}
-
-class Pair {
-    private String name;
-    private Float rate;
-
-    public Pair(String first, Float second) {
-        this.name = first;
-        this.rate = second;
+    @Override
+    public void draw(Canvas canvas) {
+        recipeManager.draw(canvas);
     }
 
-    public String getName() {
-        return name;
+    public void bringOnTop(Card c) {
+        Scene scene = Scene.top();
+        if (scene == null) {
+            Log.e(TAG, "Scene stack is empty in addToScene() " + this.getClass().getSimpleName());
+            return;
+        }
+        cards.remove(c);
+        cards.add(c);
+        scene.remove(MainScene.Layer.Card, c);
+        scene.add(MainScene.Layer.Card, c);
     }
 
-    public Float getRate() {
-        return rate;
+    public boolean onTouch(MotionEvent event) {
+        switch (event.getAction()){
+            case MotionEvent.ACTION_UP:
+                if (clickingCard != null){
+                    Card c = isCollided();
+                    Log.d(TAG, "Collision !!");
+                    if(c != null) clickingCard.collide(c);
+                    clickingCard.clicking = false;
+                    clickingCard = null;
+                    return true;
+                }
+                return false;
+            case MotionEvent.ACTION_DOWN:
+                if(clickingCard == null) {
+                    for (int i = cards.size() - 1; i >= 0; i--){
+                        Card c = cards.get(i);
+                        if(c.onTouch(event)) {
+                            clickingCard = c;
+                            break;
+                        }
+                    }
+                    if(clickingCard != null) {
+                        bringOnTop(clickingCard);
+                        return true;
+                    }
+                    return false;
+                }
+                return false;
+            case MotionEvent.ACTION_MOVE:
+                if(clickingCard != null && clickingCard.onTouch(event)) {
+                    //Card c = isCollided();
+                    //if(c != null) c.collided();
+                    return true;
+                }
+                return false;
+        }
+        return false;
     }
-}
 
-class BoosterPackManager {
-    protected final HashMap<String, ArrayList<ArrayList<Pair>>> boosterpacks = new HashMap<>();
-    public BoosterPackManager() {
-        addCardPack("boosterPack_ANewWorld",
-                CreatePairArrayList(new Pair("wood", 1.0f)),
-                CreatePairArrayList(new Pair("rock", 1.0f)),
-                CreatePairArrayList(new Pair("berry_bush", 1.0f)),
-                CreatePairArrayList(new Pair("villager", 1.0f)),
-                CreatePairArrayList(new Pair("coin", 1.0f)));
-
-        for (Map.Entry<String, ArrayList<ArrayList<Pair>>> entry : boosterpacks.entrySet()) {
-            String key = entry.getKey();
-            ArrayList<ArrayList<Pair>> values = entry.getValue();
-
-            BoosterPack card = (BoosterPack) CardManager.getInstance().CreateCard(key);
-            for(ArrayList<Pair> node : values){
-                card.PushCard(CardManager.getInstance().CreateCard(selectItemWithProbability(node)));
+    public Card isCollided(){
+        for (int i = cards.size() - 1; i >= 0; i--){
+            Card c = cards.get(i);
+            if(c == clickingCard) continue;
+            if (CollisionHelper.collides(c, clickingCard)) {
+                recipeManager.findRecipe(c, clickingCard);
+                return c;
             }
         }
-    }
-
-    private void addCardPack(String key, ArrayList<Pair>... images) {
-        boosterpacks.put(key, (ArrayList<ArrayList<Pair>>) Arrays.asList(images));
-    }
-
-    private ArrayList<Pair> CreatePairArrayList(Pair... datas) {
-        return (ArrayList<Pair>) Arrays.asList(datas);
-    }
-
-    public static String selectItemWithProbability(ArrayList<Pair> probabilities) {
-        // 각 항목의 누적 확률을 계산합니다.
-        ArrayList<Float> cumulativeProbabilities = new ArrayList<>();
-        float cumulativeProbability = 0;
-        for (Pair probability : probabilities) {
-            cumulativeProbability += probability.getRate();
-            cumulativeProbabilities.add(cumulativeProbability);
-        }
-
-        // 0과 1 사이의 임의의 숫자를 생성합니다.
-        Random rand = new Random();
-        float randomValue = rand.nextFloat();
-
-        // 임의의 숫자가 누적 확률에 속하는 항목을 찾습니다.
-        for (int i = 0; i < cumulativeProbabilities.size(); i++) {
-            if (randomValue < cumulativeProbabilities.get(i)) {
-                return probabilities.get(i).getName();
-            }
-        }
-        return "Error";
+        return null;
     }
 }

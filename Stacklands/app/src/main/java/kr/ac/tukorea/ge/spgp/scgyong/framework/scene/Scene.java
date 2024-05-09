@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.spgp.scgyong.stacklands.framework.scene;
+package kr.ac.tukorea.ge.spgp.scgyong.framework.scene;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -9,11 +9,10 @@ import android.view.MotionEvent;
 
 import java.util.ArrayList;
 
-import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.BuildConfig;
-import kr.ac.tukorea.ge.spgp.scgyong.stacklands.framework.activity.GameActivity;
-import kr.ac.tukorea.ge.spgp.scgyong.stacklands.framework.interfaces.IBoxCollidable;
-import kr.ac.tukorea.ge.spgp.scgyong.stacklands.framework.interfaces.IGameObject;
-import kr.ac.tukorea.ge.spgp.scgyong.stacklands.framework.interfaces.IRecyclable;
+import kr.ac.tukorea.ge.spgp.scgyong.stacklands.BuildConfig;
+import kr.ac.tukorea.ge.spgp.scgyong.framework.activity.GameActivity;
+import kr.ac.tukorea.ge.spgp.scgyong.framework.interfaces.IBoxCollidable;
+import kr.ac.tukorea.ge.spgp.scgyong.framework.interfaces.IGameObject;
 
 public class Scene {
 
@@ -178,9 +177,9 @@ public class Scene {
     public <E extends Enum<E>> void remove(E layer, IGameObject gameObject) {
         ArrayList<IGameObject> objects = layers.get(layer.ordinal());
         objects.remove(gameObject);
-        if (gameObject instanceof IRecyclable) {
-            RecycleBin.collect((IRecyclable) gameObject);
-        }
+//        if (gameObject instanceof IRecyclable) {
+//            RecycleBin.collect((IRecyclable) gameObject);
+//        }
     }
 
 }
