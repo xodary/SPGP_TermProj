@@ -66,7 +66,7 @@ public class RecipeManager implements IGameObject {
     private static final String TAG = CollisionChecker.class.getSimpleName();
     public ArrayList<Dummy> dummys = new ArrayList<>();
     public Recipe recipe = new Recipe();
-    public ArrayList<Card> cards = new ArrayList<>();
+    public ArrayList<Card> generatedCards = new ArrayList<>();
     public RecipeManager() { }
     @Override
     public void update(float elapsedSeconds) {
@@ -90,17 +90,24 @@ public class RecipeManager implements IGameObject {
                 c.setPosition(dummy.materials.get(0).getX()+(dummy.result.size() - 1) * 1,
                         dummy.materials.get(dummy.materials.size() - 1).getY() + 4,
                         Card.CARD_WIDTH, Card.CARD_HEIGHT);
-                cards.add(c);
+                generatedCards.add(c);
                 if(dummy.result.isEmpty()) dummy.isInRecipe = false;
             }
         }
     }
 
-    public void findRecipe(Card collided, Card collide) {
+    public void findRecipe(Card collided, ArrayList<Card> collides) {
+        if(collided == null) {
+            Dummy d = new Dummy();
+            d.materials.addAll(collides);
+            dummys.add(d);
+            recipe.inRecipe(d);
+            return;
+        }
         boolean inDummys = false;
         for (Dummy d : dummys){
-            if(d.materials.contains(collided) && !d.materials.contains(collide)){
-                d.materials.add(collide);
+            if(d.materials.contains(collided) && !d.materials.contains(collides)){
+                d.materials.addAll(collides);
                 recipe.inRecipe(d);
                 inDummys = true;
             }
@@ -108,7 +115,7 @@ public class RecipeManager implements IGameObject {
         if(!inDummys){
             Dummy d = new Dummy();
             d.materials.add(collided);
-            d.materials.add(collide);
+            d.materials.addAll(collides);
             dummys.add(d);
             recipe.inRecipe(d);
         }

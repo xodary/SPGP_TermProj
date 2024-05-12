@@ -14,10 +14,10 @@ public class Card extends Sprite implements IBoxCollidable {
     public static float CARD_WIDTH = 2;
     public static float CARD_HEIGHT = (float) 524 / 434 * CARD_WIDTH;
 
-    public float CARD_OFFSET = 0.47F;
+    public static float CARD_OFFSET = 0.47F;
     protected String name;
 
-    float[] click_offset = {0, 0};
+    public float[] click_offset = {0, 0};
 
     public Card(int mipmapID, String name) {
         super(mipmapID);
@@ -56,12 +56,7 @@ public class Card extends Sprite implements IBoxCollidable {
         float[] pts = Metrics.fromScreen(event.getX(), event.getY());
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if(super.dstRect.contains(pts[0], pts[1]) && !clicking){
-                    click_offset[0] = getX() - pts[0];
-                    click_offset[1] = getY() - pts[1];
-                    clicking = true;
-                    return true;
-                }
+                // isContains(x, y)
                 return false;
             case MotionEvent.ACTION_MOVE:
                 if(!clicking) return false;
@@ -71,14 +66,18 @@ public class Card extends Sprite implements IBoxCollidable {
         return false;
     }
 
+    public boolean isContains(float x, float y){
+        return super.dstRect.contains(x, y);
+    }
+
     @Override
     public RectF getCollisionRect() {
         return dstRect;
     }
 
     @Override
-    public void collide(Card collidedCard) {
-        setPosition(collidedCard.getX(), collidedCard.getY() + CARD_OFFSET, CARD_WIDTH, CARD_HEIGHT);
+    public void collide(Card collidedCard, int n) {
+        setPosition(collidedCard.getX(), collidedCard.getY() + CARD_OFFSET * (n+1), CARD_WIDTH, CARD_HEIGHT);
     }
 
     @Override

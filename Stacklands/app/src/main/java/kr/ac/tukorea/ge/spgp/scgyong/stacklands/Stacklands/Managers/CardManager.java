@@ -1,10 +1,12 @@
 package kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Managers;
 
 import android.graphics.Canvas;
+import android.graphics.RectF;
 import android.util.Log;
 import android.view.MotionEvent;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import kr.ac.tukorea.ge.spgp.scgyong.framework.interfaces.IGameObject;
 import kr.ac.tukorea.ge.spgp.scgyong.framework.scene.Scene;
@@ -18,8 +20,9 @@ public class CardManager implements IGameObject {
     private static final String TAG = CardManager.class.getSimpleName();
     private final MainScene scene;
     private final ArrayList<Card> cards = new ArrayList<>();
-    public Card clickingCard = null;
+    public ArrayList<Card> clickingCard = new ArrayList<>();
     public RecipeManager recipeManager = new RecipeManager();
+    public RectF collisionBox = new RectF();
     public CardManager(MainScene scene) {
         this.scene = scene;
         // cards.add(CardGenerator.getInstance().CreateCard("boosterPack_ANewWorld"));
@@ -41,13 +44,13 @@ public class CardManager implements IGameObject {
     @Override
     public void update(float elapsedSeconds) {
         recipeManager.update(elapsedSeconds);
-        for(Card c : recipeManager.cards){
+        for(Card c : recipeManager.generatedCards){
             cards.add(c);
             scene.add(MainScene.Layer.Card, c);
         }
-        recipeManager.cards.clear();
+        recipeManager.generatedCards.clear();
 
-        if(clickingCard != null){
+        if(!clickingCard.isEmpty()){
             Card c = isCollided();
             if(c != null) c.collided();
         }
@@ -58,49 +61,70 @@ public class CardManager implements IGameObject {
         recipeManager.draw(canvas);
     }
 
-    public void bringOnTop(Card c) {
+    public void bringOnTop(ArrayList<Card> cardList) {
         Scene scene = Scene.top();
         if (scene == null) {
             Log.e(TAG, "Scene stack is empty in addToScene() " + this.getClass().getSimpleName());
             return;
         }
-        cards.remove(c);
-        cards.add(c);
-        scene.remove(MainScene.Layer.Card, c);
-        scene.add(MainScene.Layer.Card, c);
+        cards.removeAll(cardList);
+        cards.addAll(cardList);
+        for(Card cc : cardList) {
+            scene.remove(MainScene.Layer.Card, cc);
+        }
+        for(Card cc : cardList) {
+            scene.add(MainScene.Layer.Card, cc);
+        }
     }
 
     public boolean onTouch(MotionEvent event) {
+        float[] pts = Metrics.fromScreen(event.getX(), event.getY());
         switch (event.getAction()){
             case MotionEvent.ACTION_UP:
-                if (clickingCard != null){
+                if (!clickingCard.isEmpty()){
                     Card c = isCollided();
                     if(c != null) {
-                        clickingCard.collide(c);
-                        recipeManager.findRecipe(c, clickingCard);
+                        for (int i = 0; i < clickingCard.size(); ++i) {
+                            clickingCard.get(i).collide(c, i);
+                            clickingCard.get(i).clicking = false;
+                        }
                     }
-                    clickingCard.clicking = false;
-                    clickingCard = null;
+                    recipeManager.findRecipe(c, clickingCard);
+                    clickingCard.removeAll(clickingCard);
                     return true;
                 }
                 return false;
             case MotionEvent.ACTION_DOWN:
-                if(clickingCard == null) {
+                if(clickingCard.isEmpty()) {
                     for (int i = cards.size() - 1; i >= 0; i--){
                         Card c = cards.get(i);
-                        if(c.onTouch(event)) {
-                            clickingCard = c;
-                            break;
+                        if(c.isContains(pts[0], pts[1])){
+                            c.click_offset[0] = c.getX() - pts[0];
+                            c.click_offset[1] = c.getY() - pts[1];
+                            c.clicking = true;
+                            for(Dummy d : recipeManager.dummys){
+                                if(d.materials.contains(c)) {
+                                    List<Card> list = d.materials.subList(d.materials.indexOf(c), d.materials.size());
+                                    clickingCard.addAll(list);
+                                    d.materials.removeAll(list);
+                                    bringOnTop(clickingCard);
+                                    return true;
+                                }
+                            }
+                            clickingCard.add(c);
+                            bringOnTop(clickingCard);
+                            return true;
                         }
-                    }
-                    if(clickingCard != null) {
-                        bringOnTop(clickingCard);
-                        return true;
                     }
                     return false;
                 }
             case MotionEvent.ACTION_MOVE:
-                if(clickingCard != null && clickingCard.onTouch(event)) {
+                if(!clickingCard.isEmpty()) {
+                    for(int i = 0; i < clickingCard.size(); ++i)
+                        clickingCard.get(i).setPosition(
+                                pts[0] + clickingCard.get(0).click_offset[0],
+                                pts[1] + clickingCard.get(0).click_offset[1] + Card.CARD_OFFSET * i,
+                                        Card.CARD_WIDTH, Card.CARD_HEIGHT);
                     Card c = isCollided();
                     if(c != null) c.collided();
                     return true;
@@ -111,10 +135,13 @@ public class CardManager implements IGameObject {
     }
 
     public Card isCollided(){
+        if(clickingCard.isEmpty()) return null;
         for (int i = cards.size() - 1; i >= 0; i--){
             Card c = cards.get(i);
-            if(c == clickingCard) continue;
-            if (CollisionHelper.collides(c, clickingCard)) {
+            if(clickingCard.contains(c)) continue;
+            collisionBox = new RectF(clickingCard.get(0).getCollisionRect());
+            collisionBox.bottom = clickingCard.get(clickingCard.size()-1).getCollisionRect().bottom;
+            if (CollisionHelper.collides(c, collisionBox)) {
                 return c;
             }
         }
