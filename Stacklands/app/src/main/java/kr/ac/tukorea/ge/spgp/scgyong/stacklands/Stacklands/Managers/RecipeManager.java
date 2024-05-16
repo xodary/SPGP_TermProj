@@ -11,6 +11,7 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import kr.ac.tukorea.ge.spgp.scgyong.framework.interfaces.IGameObject;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.Card;
@@ -25,6 +26,7 @@ class Dummy {
 }
 
 class Recipe {
+
     class CardResult{
         AbstractMap.SimpleEntry<String, Integer> resultNameNum; // 결과 카드의 이름, 갯수
         Float time;
@@ -39,9 +41,8 @@ class Recipe {
         sort(material_list);
         recipes.put(material_list, result);
     }
-
     public Recipe() {
-        addRecipe("berry",1,1.0f, "villager", "berry_bush");
+        addRecipe("berry",4,1.0f, "villager", "berry_bush");
     }
 
     public boolean inRecipe(Dummy dummy){
@@ -67,7 +68,10 @@ public class RecipeManager implements IGameObject {
     public ArrayList<Dummy> dummys = new ArrayList<>();
     public Recipe recipe = new Recipe();
     public ArrayList<Card> generatedCards = new ArrayList<>();
-    public RecipeManager() { }
+    public RecipeManager(CardManager cardManager) {
+        this.cardManager = cardManager;
+    }
+    CardManager cardManager = null;
     @Override
     public void update(float elapsedSeconds) {
         // 더미 중에서 1개인게 있으면 더미에서 삭제한다.
@@ -91,20 +95,25 @@ public class RecipeManager implements IGameObject {
                         dummy.materials.get(dummy.materials.size() - 1).getY() + 4,
                         Card.CARD_WIDTH, Card.CARD_HEIGHT);
                 generatedCards.add(c);
-                if(dummy.result.isEmpty()) dummy.isInRecipe = false;
+                if(dummy.result.isEmpty()) {
+                    dummy.isInRecipe = false;
+                    for(Card m : dummy.materials) {
+                        if (!m.getClass().getSimpleName().equals("YellowCard")) {
+                            this.cardManager.removeCard(m);
+                        }
+                    }
+                }
             }
         }
     }
 
     public void findRecipe(Card collided, ArrayList<Card> collides) {
-        if(collided == null) {
-            Dummy d = new Dummy();
-            d.materials.addAll(collides);
-            dummys.add(d);
-            recipe.inRecipe(d);
+        boolean inDummys = false;
+        if(collided == null && collides.size() == 1) return;
+        if(collided == null && collides.size() > 1){
+            addDummy(collides);
             return;
         }
-        boolean inDummys = false;
         for (Dummy d : dummys){
             if(d.materials.contains(collided) && !d.materials.contains(collides)){
                 d.materials.addAll(collides);
@@ -113,14 +122,18 @@ public class RecipeManager implements IGameObject {
             }
         }
         if(!inDummys){
-            Dummy d = new Dummy();
-            d.materials.add(collided);
-            d.materials.addAll(collides);
-            dummys.add(d);
-            recipe.inRecipe(d);
+            collides.add(0, collided);
+            addDummy(collides);
         }
     }
 
+    public Dummy addDummy(ArrayList<Card> cards){
+        Dummy d = new Dummy();
+        d.materials.addAll(cards);
+        dummys.add(d);
+        recipe.inRecipe(d);
+        return d;
+    }
     Paint outlinePaint = null;
     Paint inlinePaint = null;
     @Override
@@ -150,5 +163,24 @@ public class RecipeManager implements IGameObject {
             RectF ir = new RectF(x - width/2, y - height/2, x - width/2 + new_width, y + height/2);
             canvas.drawRect(ir, inlinePaint);
         }
+    }
+
+    public ArrayList<Card> isInDummy(Card c, ArrayList<Card> mainSceneCards) {
+        for(Dummy d : dummys){
+            if(d.materials.contains(c)) {
+                int idx = d.materials.indexOf(c);
+                if(idx == 0){
+                    mainSceneCards = d.materials;
+                    return mainSceneCards;
+                }
+                List<Card> list = d.materials.subList(idx, d.materials.size());
+                Dummy newDummy = addDummy(new ArrayList<>(list));
+                d.materials.removeAll(list);
+                mainSceneCards = newDummy.materials;
+                return mainSceneCards;
+            }
+        }
+        mainSceneCards.add(c);
+        return mainSceneCards;
     }
 }

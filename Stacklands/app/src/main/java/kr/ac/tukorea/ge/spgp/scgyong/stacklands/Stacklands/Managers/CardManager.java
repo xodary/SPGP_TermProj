@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import kr.ac.tukorea.ge.spgp.scgyong.framework.interfaces.IGameObject;
 import kr.ac.tukorea.ge.spgp.scgyong.framework.scene.Scene;
@@ -21,7 +20,7 @@ public class CardManager implements IGameObject {
     private final MainScene scene;
     private final ArrayList<Card> cards = new ArrayList<>();
     public ArrayList<Card> clickingCard = new ArrayList<>();
-    public RecipeManager recipeManager = new RecipeManager();
+    public RecipeManager recipeManager = new RecipeManager(this);
     public RectF collisionBox = new RectF();
     public CardManager(MainScene scene) {
         this.scene = scene;
@@ -41,6 +40,10 @@ public class CardManager implements IGameObject {
         scene.add(MainScene.Layer.Card, c);
     }
 
+    public void removeCard(Card c){
+        cards.remove(c);
+        scene.remove(MainScene.Layer.Card, c);
+    }
     @Override
     public void update(float elapsedSeconds) {
         recipeManager.update(elapsedSeconds);
@@ -81,7 +84,7 @@ public class CardManager implements IGameObject {
         float[] pts = Metrics.fromScreen(event.getX(), event.getY());
         switch (event.getAction()){
             case MotionEvent.ACTION_UP:
-                if (!clickingCard.isEmpty()){
+                if (!clickingCard.isEmpty()) {
                     Card c = isCollided();
                     if(c != null) {
                         for (int i = 0; i < clickingCard.size(); ++i) {
@@ -102,16 +105,7 @@ public class CardManager implements IGameObject {
                             c.click_offset[0] = c.getX() - pts[0];
                             c.click_offset[1] = c.getY() - pts[1];
                             c.clicking = true;
-                            for(Dummy d : recipeManager.dummys){
-                                if(d.materials.contains(c)) {
-                                    List<Card> list = d.materials.subList(d.materials.indexOf(c), d.materials.size());
-                                    clickingCard.addAll(list);
-                                    d.materials.removeAll(list);
-                                    bringOnTop(clickingCard);
-                                    return true;
-                                }
-                            }
-                            clickingCard.add(c);
+                            clickingCard = recipeManager.isInDummy(c, clickingCard);
                             bringOnTop(clickingCard);
                             return true;
                         }

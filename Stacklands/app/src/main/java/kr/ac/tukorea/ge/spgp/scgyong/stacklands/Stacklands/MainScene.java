@@ -4,7 +4,9 @@ import android.view.MotionEvent;
 
 import java.util.ArrayList;
 
+import kr.ac.tukorea.ge.spgp.scgyong.framework.objects.ScrollBackground;
 import kr.ac.tukorea.ge.spgp.scgyong.framework.scene.Scene;
+import kr.ac.tukorea.ge.spgp.scgyong.stacklands.R;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.Card;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Managers.CardManager;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Managers.RecipeManager;
@@ -21,6 +23,8 @@ public class MainScene extends Scene {
         initLayers(Layer.COUNT);
         cardManager = new CardManager(this);
         // add(Layer.controller, new CollisionChecker(this));
+
+        add(Layer.BG, new ScrollBackground(R.mipmap.background, 1.0f));
         add(Layer.controller, cardManager);
     }
 
