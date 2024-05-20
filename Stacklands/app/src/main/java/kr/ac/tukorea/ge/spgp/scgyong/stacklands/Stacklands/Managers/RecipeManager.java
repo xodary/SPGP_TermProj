@@ -18,6 +18,7 @@ import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.Card;
 
 class Dummy {
     ArrayList<Card> materials = new ArrayList<>();
+    ArrayList<Card> deleteCard = new ArrayList<>();
     boolean isInRecipe = false;
     ArrayList<Card> result;
     Float fullTime;
@@ -100,8 +101,11 @@ public class RecipeManager implements IGameObject {
                     for(Card m : dummy.materials) {
                         if (!m.getClass().getSimpleName().equals("YellowCard")) {
                             this.cardManager.removeCard(m);
+                            dummy.deleteCard.add(m);
                         }
                     }
+                    dummy.materials.removeAll(dummy.deleteCard);
+                    dummy.deleteCard.removeAll(dummy.deleteCard);
                 }
             }
         }

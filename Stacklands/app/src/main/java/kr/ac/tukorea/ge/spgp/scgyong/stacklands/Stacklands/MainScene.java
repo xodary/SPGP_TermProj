@@ -9,6 +9,7 @@ import kr.ac.tukorea.ge.spgp.scgyong.framework.scene.Scene;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.R;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.Card;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Managers.CardManager;
+import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Managers.GameTimer;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Managers.RecipeManager;
 
 public class MainScene extends Scene {
@@ -17,7 +18,7 @@ public class MainScene extends Scene {
     CardManager cardManager = null;
     RecipeManager recipeManager;
     public enum Layer {
-        BG, CardPack, Card, controller, COUNT
+        BG, CardPack, Card, controller, timer, COUNT
     }
     public MainScene() {
         initLayers(Layer.COUNT);
@@ -26,6 +27,7 @@ public class MainScene extends Scene {
 
         add(Layer.BG, new ScrollBackground(R.mipmap.background, 1.0f));
         add(Layer.controller, cardManager);
+        add(Layer.timer, new GameTimer(this));
     }
 
     @Override
