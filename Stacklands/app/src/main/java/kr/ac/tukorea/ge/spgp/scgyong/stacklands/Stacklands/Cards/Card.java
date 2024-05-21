@@ -25,6 +25,10 @@ public class Card extends Sprite implements IBoxCollidable {
         setPosition(Metrics.width / 2, Metrics.height / 2, CARD_WIDTH, CARD_HEIGHT);
     }
 
+    public moveTo(float x, float y){
+
+    }
+
     Paint paint;
     @Override
     public void draw(Canvas canvas) {

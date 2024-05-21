@@ -34,7 +34,7 @@ public class CardGenerator {
         cardSupplier.put("flint", () -> new SilverCard(R.mipmap.silver_flint, 2, "flint"));
         cardSupplier.put("stick", () -> new SilverCard(R.mipmap.silver_stick, 2, "stick"));
         cardSupplier.put("villager", () -> new YellowCard(R.mipmap.yellow_villager, 15, "villager"));
-        cardSupplier.put("berry", () -> new OrangeCard(R.mipmap.orange_berry, 1, "berry"));
+        cardSupplier.put("berry", () -> new OrangeCard(R.mipmap.orange_berry, 1, 1, "berry"));
         cardSupplier.put("berry_bush", () -> new BlackCard(R.mipmap.black_berry_bush, 1, "berry_bush"));
         cardSupplier.put("boosterPack_ANewWorld", () -> new BoosterPack(R.mipmap.pack_a_new_world, 0, "boosterPack_ANewWorld"));
         cardSupplier.put("boosterPack_CuriousCuisine", () -> new BoosterPack(R.mipmap.pack_curious_cuisine, 3, "boosterPack_ANewWorld"));
