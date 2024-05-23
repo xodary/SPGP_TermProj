@@ -6,7 +6,6 @@ import kr.ac.tukorea.ge.spgp.scgyong.framework.objects.ScrollBackground;
 import kr.ac.tukorea.ge.spgp.scgyong.framework.scene.Scene;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.R;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Managers.CardManager;
-import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Managers.FeedVillager;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Managers.GameTimer;
 
 public class MainScene extends Scene {
@@ -18,13 +17,12 @@ public class MainScene extends Scene {
     public MainScene() {
         initLayers(Layer.COUNT);
         cardManager = new CardManager(this);
-        FeedVillager feedVillager = new FeedVillager();
-        GameTimer gameTimer = new GameTimer(feedVillager);
+        GameTimer gameTimer = new GameTimer(cardManager);
+        cardManager.timer = gameTimer;
 
         add(Layer.BG, new ScrollBackground(R.mipmap.background, 1.0f));
         add(Layer.controller, cardManager);
         add(Layer.timer, gameTimer);
-        add(Layer.timer, feedVillager);
     }
 
     @Override

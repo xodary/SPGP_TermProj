@@ -65,7 +65,7 @@ class Recipe {
     }
 }
 public class RecipeManager implements IGameObject {
-    private static final String TAG = CollisionChecker.class.getSimpleName();
+    private static final String TAG = RecipeManager.class.getSimpleName();
     public ArrayList<Dummy> dummys = new ArrayList<>();
     public Recipe recipe = new Recipe();
     public ArrayList<Card> generatedCards = new ArrayList<>();

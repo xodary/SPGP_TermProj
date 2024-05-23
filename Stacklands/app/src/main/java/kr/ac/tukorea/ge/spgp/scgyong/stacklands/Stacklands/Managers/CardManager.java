@@ -12,6 +12,7 @@ import kr.ac.tukorea.ge.spgp.scgyong.framework.scene.Scene;
 import kr.ac.tukorea.ge.spgp.scgyong.framework.util.CollisionHelper;
 import kr.ac.tukorea.ge.spgp.scgyong.framework.view.Metrics;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.Card;
+import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.OrangeCard;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.MainScene;
 
 public class CardManager implements IGameObject {
@@ -21,23 +22,27 @@ public class CardManager implements IGameObject {
     private final ArrayList<Card> cards = new ArrayList<>();
     public ArrayList<Card> clickingCard = new ArrayList<>();
     public RecipeManager recipeManager = new RecipeManager(this);
+    public FeedVillager feedVillager = new FeedVillager(this);
     public RectF collisionBox = new RectF();
+    public GameTimer timer;
     public CardManager(MainScene scene) {
         this.scene = scene;
         // cards.add(CardGenerator.getInstance().CreateCard("boosterPack_ANewWorld"));
         addCard("boosterPack_ANewWorld",0,0);
         addCard("flint",3,0);
-        addCard("villager",0,5);
+        feedVillager.addVillager(addCard("villager",0,5));
         addCard("berry_bush",-3,0);
-        addCard("berry",-3,-5);
+        feedVillager.addFood((OrangeCard) addCard("berry",-3,-5));
+        feedVillager.addFood((OrangeCard) addCard("berry",-2,-5));
     }
 
-    public void addCard(String str, float offsetX, float offsetY){
+    public Card addCard(String str, float offsetX, float offsetY){
         Card c = CardGenerator.getInstance().CreateCard(str);
         c.setPosition(Metrics.width / 2 - offsetX, Metrics.height / 2 - offsetY,
                 Card.CARD_WIDTH, Card.CARD_HEIGHT);
         cards.add(c);
         scene.add(MainScene.Layer.Card, c);
+        return c;
     }
 
     public void removeCard(Card c){
@@ -46,6 +51,7 @@ public class CardManager implements IGameObject {
     }
     @Override
     public void update(float elapsedSeconds) {
+        feedVillager.update(elapsedSeconds);
         recipeManager.update(elapsedSeconds);
         for(Card c : recipeManager.generatedCards){
             cards.add(c);
@@ -143,4 +149,6 @@ public class CardManager implements IGameObject {
     }
 
 
+    public void GameOver() {
+    }
 }

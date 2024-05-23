@@ -10,6 +10,7 @@ import kr.ac.tukorea.ge.spgp.scgyong.framework.view.Metrics;
 
 public class GameTimer implements IGameObject {
     static float TURNTIME = 5.f;
+    public boolean isActive = true;
     float spendedTime = 0.0f;
     int days = 1;
     static float barWidth = Metrics.width / 2 - 0.5f;
@@ -19,18 +20,21 @@ public class GameTimer implements IGameObject {
     static RectF inlineRect = new RectF(outlineRect.left + 0.2f, outlineRect.top + 0.2f,
             outlineRect.right - 0.2f, outlineRect.bottom - 0.2f);
 
+    CardManager cardManager = null;
     FeedVillager feedVillager = null;
-    public GameTimer(FeedVillager feedVillager) {
-        this.feedVillager = feedVillager;
+    public GameTimer(CardManager cardManager) {
+        this.cardManager = cardManager;
+        this.feedVillager = cardManager.feedVillager;
     }
 
     @Override
     public void update(float elapsedSeconds) {
-        spendedTime += elapsedSeconds;
-        if (spendedTime > TURNTIME) {
-            feedVillager.startFeeding();
-            days += 1;
-            spendedTime = 0.0f;
+        if(isActive) {
+            spendedTime += elapsedSeconds;
+            if (spendedTime > TURNTIME) {
+                feedVillager.startFeeding();
+                isActive = false;
+            }
         }
     }
 
@@ -59,5 +63,11 @@ public class GameTimer implements IGameObject {
         inlineRect.left = outlineRect.left + 0.2f + ((spendedTime)/TURNTIME) * (barWidth-0.4f);
         canvas.drawRect(inlineRect, inlinePaint);
         canvas.drawText("Day"+days, 1, 1.3f, textPaint);
+    }
+
+    public void reset() {
+        isActive = true;
+        spendedTime = 0.0f;
+        days += 1;
     }
 }

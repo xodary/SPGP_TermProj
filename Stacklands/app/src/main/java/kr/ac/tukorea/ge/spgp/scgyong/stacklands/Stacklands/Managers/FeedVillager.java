@@ -1,10 +1,7 @@
 package kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Managers;
 
-import android.graphics.Canvas;
-
 import java.util.ArrayList;
 
-import kr.ac.tukorea.ge.spgp.scgyong.framework.interfaces.IGameObject;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.Card;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.OrangeCard;
 
@@ -25,14 +22,14 @@ class FoodForVillager {
         if(this.satiety >= 2) isEnough = true;
     }
 }
-public class FeedVillager implements IGameObject {
+public class FeedVillager {
     boolean timerStart = false;
-    static float FEEDTIME = 5.f;
+    static float FEEDTIME = 2.f;
     float spendedTime = 0.0f;
     ArrayList<FoodForVillager> foodForVillager = new ArrayList<>();
-    public FeedVillager() {
-    }
+    CardManager cardManager;
 
+    public FeedVillager(CardManager cardManager){this.cardManager = cardManager;}
     public void addVillager(Card v){
         foodForVillager.add(new FoodForVillager(v));
     }
@@ -43,12 +40,14 @@ public class FeedVillager implements IGameObject {
         }
     }
 
-    @Override
     public void update(float elapsedSeconds) {
         if(timerStart) {
             spendedTime += elapsedSeconds;
             for(FoodForVillager villager : foodForVillager){
-                if(spendedTime < FEEDTIME) {
+                if(!villager.isEnough) cardManager.GameOver();
+                if(spendedTime > FEEDTIME) {
+                    for(Card c : villager.foods)
+                        cardManager.removeCard(c);
                     villager.isFull = true;
                     spendedTime  = 0.0f;
                 }
@@ -63,12 +62,10 @@ public class FeedVillager implements IGameObject {
                 return;
             }
             timerStart = false;
+            cardManager.timer.reset();
         }
     }
 
-    @Override
-    public void draw(Canvas canvas) {
-    }
     public void startFeeding(){
         timerStart = true;
         for(FoodForVillager villager : foodForVillager){
@@ -77,5 +74,9 @@ public class FeedVillager implements IGameObject {
                 food.originY = food.getY();
             }
         }
+    }
+
+    public boolean isDoneFeeding() {
+        return !timerStart;
     }
 }
