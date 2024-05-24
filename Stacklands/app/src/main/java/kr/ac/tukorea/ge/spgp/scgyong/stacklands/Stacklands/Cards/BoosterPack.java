@@ -7,7 +7,7 @@ public class BoosterPack extends Card {
     protected final ArrayList<Card> cards = new ArrayList<>();
 
     public BoosterPack(int mipmapID, int buyPrice, String name) {
-        super(mipmapID, name);
+        super(mipmapID, name, "BoosterPack");
         this.buyPrice = buyPrice;
     }
 

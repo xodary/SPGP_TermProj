@@ -16,12 +16,14 @@ public class Card extends Sprite implements IBoxCollidable {
 
     public static float CARD_OFFSET = 0.47F;
     protected String name;
+    public String color;
 
     public float[] click_offset = {0, 0};
 
-    public Card(int mipmapID, String name) {
+    public Card(int mipmapID, String name, String color) {
         super(mipmapID);
         this.name = name;
+        this.color = color;
         setPosition(Metrics.width / 2, Metrics.height / 2, CARD_WIDTH, CARD_HEIGHT);
     }
 

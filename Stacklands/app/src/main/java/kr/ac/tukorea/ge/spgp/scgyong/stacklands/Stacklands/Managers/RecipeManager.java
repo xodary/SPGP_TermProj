@@ -69,10 +69,10 @@ public class RecipeManager implements IGameObject {
     public ArrayList<Dummy> dummys = new ArrayList<>();
     public Recipe recipe = new Recipe();
     public ArrayList<Card> generatedCards = new ArrayList<>();
-    public RecipeManager(CardManager cardManager) {
-        this.cardManager = cardManager;
+    public static RecipeManager recipeManager;
+    public RecipeManager() {
+        recipeManager = this;
     }
-    CardManager cardManager = null;
     @Override
     public void update(float elapsedSeconds) {
         // 더미 중에서 1개인게 있으면 더미에서 삭제한다.
@@ -99,8 +99,8 @@ public class RecipeManager implements IGameObject {
                 if(dummy.result.isEmpty()) {
                     dummy.isInRecipe = false;
                     for(Card m : dummy.materials) {
-                        if (!m.getClass().getSimpleName().equals("YellowCard")) {
-                            this.cardManager.removeCard(m);
+                        if (m.color != "Yellow") {
+                            CardManager.cardManager.removeCard(m);
                             dummy.deleteCard.add(m);
                         }
                     }

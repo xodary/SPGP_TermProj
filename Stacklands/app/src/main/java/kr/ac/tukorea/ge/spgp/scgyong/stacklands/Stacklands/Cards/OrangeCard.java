@@ -6,7 +6,7 @@ public class OrangeCard extends Card {
     public float originX;
     public float originY;
     public OrangeCard(int mipmapID, int sell_price, int satiety, String name) {
-        super(mipmapID, name);
+        super(mipmapID, name, "Orange");
         this.sell_price = sell_price;
         this.satiety = satiety;
     }

@@ -1,7 +1,10 @@
 package kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Managers;
 
+import android.graphics.Canvas;
+
 import java.util.ArrayList;
 
+import kr.ac.tukorea.ge.spgp.scgyong.framework.interfaces.IGameObject;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.Card;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.OrangeCard;
 
@@ -22,21 +25,21 @@ class FoodForVillager {
         if(this.satiety >= 2) isEnough = true;
     }
 }
-public class FeedVillager {
+public class FeedVillager implements IGameObject {
+    public static FeedVillager feedVillager;
     boolean timerStart = false;
     static float FEEDTIME = 2.f;
     float spendedTime = 0.0f;
     ArrayList<FoodForVillager> foodForVillager = new ArrayList<>();
-    CardManager cardManager;
 
-    public FeedVillager(CardManager cardManager){this.cardManager = cardManager;}
+    public FeedVillager(){ feedVillager = this; }
     public void addVillager(Card v){
         foodForVillager.add(new FoodForVillager(v));
     }
-    public void addFood(OrangeCard f){
+    public void addFood(Card f){
         for(FoodForVillager villager : foodForVillager) {
             if(!villager.isEnough)
-                villager.Feed(f);
+                villager.Feed((OrangeCard)f);
         }
     }
 
@@ -44,10 +47,10 @@ public class FeedVillager {
         if(timerStart) {
             spendedTime += elapsedSeconds;
             for(FoodForVillager villager : foodForVillager){
-                if(!villager.isEnough) cardManager.GameOver();
+                if(!villager.isEnough) CardManager.cardManager.GameOver();
                 if(spendedTime > FEEDTIME) {
                     for(Card c : villager.foods)
-                        cardManager.removeCard(c);
+                        CardManager.cardManager.removeCard(c);
                     villager.isFull = true;
                     spendedTime  = 0.0f;
                 }
@@ -62,8 +65,13 @@ public class FeedVillager {
                 return;
             }
             timerStart = false;
-            cardManager.timer.reset();
+            GameTimer.gameTimer.reset();
         }
+    }
+
+    @Override
+    public void draw(Canvas canvas) {
+
     }
 
     public void startFeeding(){

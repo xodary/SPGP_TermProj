@@ -12,7 +12,6 @@ import kr.ac.tukorea.ge.spgp.scgyong.framework.scene.Scene;
 import kr.ac.tukorea.ge.spgp.scgyong.framework.util.CollisionHelper;
 import kr.ac.tukorea.ge.spgp.scgyong.framework.view.Metrics;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.Card;
-import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.OrangeCard;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.MainScene;
 
 public class CardManager implements IGameObject {
@@ -21,23 +20,26 @@ public class CardManager implements IGameObject {
     private final MainScene scene;
     private final ArrayList<Card> cards = new ArrayList<>();
     public ArrayList<Card> clickingCard = new ArrayList<>();
-    public RecipeManager recipeManager = new RecipeManager(this);
-    public FeedVillager feedVillager = new FeedVillager(this);
+    public static CardManager cardManager;
     public RectF collisionBox = new RectF();
-    public GameTimer timer;
+    public FeedVillager feedVillager = new FeedVillager();
     public CardManager(MainScene scene) {
+        cardManager = this;
         this.scene = scene;
         // cards.add(CardGenerator.getInstance().CreateCard("boosterPack_ANewWorld"));
         addCard("boosterPack_ANewWorld",0,0);
         addCard("flint",3,0);
-        feedVillager.addVillager(addCard("villager",0,5));
+        addCard("villager",0,5);
         addCard("berry_bush",-3,0);
-        feedVillager.addFood((OrangeCard) addCard("berry",-3,-5));
-        feedVillager.addFood((OrangeCard) addCard("berry",-2,-5));
+        addCard("berry",-3,-5);
+        addCard("berry",-2,-5);
     }
-
     public Card addCard(String str, float offsetX, float offsetY){
         Card c = CardGenerator.getInstance().CreateCard(str);
+        if(c.color == "Yellow")
+            feedVillager.addVillager(c);
+        else if(c.color == "Orange")
+            feedVillager.addFood(c);
         c.setPosition(Metrics.width / 2 - offsetX, Metrics.height / 2 - offsetY,
                 Card.CARD_WIDTH, Card.CARD_HEIGHT);
         cards.add(c);
@@ -52,12 +54,12 @@ public class CardManager implements IGameObject {
     @Override
     public void update(float elapsedSeconds) {
         feedVillager.update(elapsedSeconds);
-        recipeManager.update(elapsedSeconds);
-        for(Card c : recipeManager.generatedCards){
+        RecipeManager.recipeManager.update(elapsedSeconds);
+        for(Card c : RecipeManager.recipeManager.generatedCards){
             cards.add(c);
             scene.add(MainScene.Layer.Card, c);
         }
-        recipeManager.generatedCards.clear();
+        RecipeManager.recipeManager.generatedCards.clear();
 
         if(!clickingCard.isEmpty()){
             Card c = isCollided();
@@ -67,7 +69,6 @@ public class CardManager implements IGameObject {
 
     @Override
     public void draw(Canvas canvas) {
-        recipeManager.draw(canvas);
     }
 
     public void bringOnTop(ArrayList<Card> cardList) {
@@ -98,7 +99,7 @@ public class CardManager implements IGameObject {
                             clickingCard.get(i).clicking = false;
                         }
                     }
-                    recipeManager.findRecipe(c, clickingCard);
+                    RecipeManager.recipeManager.findRecipe(c, clickingCard);
                     clickingCard.removeAll(clickingCard);
                     return true;
                 }
@@ -111,7 +112,7 @@ public class CardManager implements IGameObject {
                             c.click_offset[0] = c.getX() - pts[0];
                             c.click_offset[1] = c.getY() - pts[1];
                             c.clicking = true;
-                            clickingCard = recipeManager.isInDummy(c, clickingCard);
+                            clickingCard = RecipeManager.recipeManager.isInDummy(c, clickingCard);
                             bringOnTop(clickingCard);
                             return true;
                         }

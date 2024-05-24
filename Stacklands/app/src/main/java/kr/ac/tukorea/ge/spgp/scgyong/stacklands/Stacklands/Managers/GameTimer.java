@@ -9,6 +9,7 @@ import kr.ac.tukorea.ge.spgp.scgyong.framework.interfaces.IGameObject;
 import kr.ac.tukorea.ge.spgp.scgyong.framework.view.Metrics;
 
 public class GameTimer implements IGameObject {
+    public static GameTimer gameTimer;
     static float TURNTIME = 5.f;
     public boolean isActive = true;
     float spendedTime = 0.0f;
@@ -20,11 +21,8 @@ public class GameTimer implements IGameObject {
     static RectF inlineRect = new RectF(outlineRect.left + 0.2f, outlineRect.top + 0.2f,
             outlineRect.right - 0.2f, outlineRect.bottom - 0.2f);
 
-    CardManager cardManager = null;
-    FeedVillager feedVillager = null;
-    public GameTimer(CardManager cardManager) {
-        this.cardManager = cardManager;
-        this.feedVillager = cardManager.feedVillager;
+    public GameTimer() {
+        gameTimer = this;
     }
 
     @Override
@@ -32,7 +30,7 @@ public class GameTimer implements IGameObject {
         if(isActive) {
             spendedTime += elapsedSeconds;
             if (spendedTime > TURNTIME) {
-                feedVillager.startFeeding();
+                FeedVillager.feedVillager.startFeeding();
                 isActive = false;
             }
         }

@@ -4,7 +4,7 @@ public class BlackCard extends Card{
     private int sellPrice;
 
     public BlackCard(int mipmapID, int sellPrice, String name) {
-        super(mipmapID, name);
+        super(mipmapID, name, "Black");
         this.sellPrice = sellPrice;
     }
 }

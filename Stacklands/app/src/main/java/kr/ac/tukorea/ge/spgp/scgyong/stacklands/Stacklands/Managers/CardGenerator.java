@@ -41,7 +41,7 @@ public class CardGenerator {
     }
 
     public Card CreateCard(String str) {
-        Supplier<Card> supplier = () -> new Card(0, "NoNameCard");
+        Supplier<Card> supplier = () -> new Card(0, "NoNameCard", "NoColor");
         return cardSupplier.getOrDefault(str, supplier).get();
     }
 }
