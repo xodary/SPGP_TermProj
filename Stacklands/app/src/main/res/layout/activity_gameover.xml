@@ -31,7 +31,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-condensed"
-            android:text="StackLands"
+            android:text="GameOver"
+            android:textColor="#AA5252"
             android:textSize="70sp"
             android:textStyle="italic|bold" />
 
@@ -45,7 +46,7 @@
             android:shadowDx="3"
             android:shadowDy="3"
             android:shadowRadius="5"
-            android:text="START "
+            android:text="REPLAY"
             android:textSize="30sp"
             android:textStyle="italic|bold"
             app:icon="@android:drawable/ic_menu_send"

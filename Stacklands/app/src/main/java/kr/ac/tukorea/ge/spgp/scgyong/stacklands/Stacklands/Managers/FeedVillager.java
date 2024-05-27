@@ -47,10 +47,13 @@ public class FeedVillager implements IGameObject {
         if(timerStart) {
             spendedTime += elapsedSeconds;
             for(FoodForVillager villager : foodForVillager){
-                if(!villager.isEnough) CardManager.cardManager.GameOver();
+                if(!villager.isEnough) {
+                    CardManager.cardManager.GameOver();
+                }
                 if(spendedTime > FEEDTIME) {
                     for(Card c : villager.foods)
                         CardManager.cardManager.removeCard(c);
+                    villager.isEnough = false;
                     villager.isFull = true;
                     spendedTime  = 0.0f;
                 }

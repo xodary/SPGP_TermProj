@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import kr.ac.tukorea.ge.spgp.scgyong.framework.view.GameView;
 
 public class GameActivity extends AppCompatActivity {
-
     public static GameActivity activity;
     private GameView gameView;
 

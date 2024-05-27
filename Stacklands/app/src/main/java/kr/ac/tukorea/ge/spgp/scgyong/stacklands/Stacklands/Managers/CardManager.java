@@ -149,7 +149,7 @@ public class CardManager implements IGameObject {
         return null;
     }
 
-
-    public void GameOver() {
+    void GameOver(){
+        scene.activity.overGameActivity();
     }
 }
