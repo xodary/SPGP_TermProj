@@ -36,12 +36,18 @@ public class CardManager implements IGameObject {
     }
     public Card addCard(String str, float offsetX, float offsetY){
         Card c = CardGenerator.getInstance().CreateCard(str);
+
+        c.setPosition(Metrics.width / 2 - offsetX, Metrics.height / 2 - offsetY,
+                Card.CARD_WIDTH, Card.CARD_HEIGHT);
+        addCard(c);
+        return c;
+    }
+
+    public Card addCard(Card c){
         if(c.color == "Yellow")
             feedVillager.addVillager(c);
         else if(c.color == "Orange")
             feedVillager.addFood(c);
-        c.setPosition(Metrics.width / 2 - offsetX, Metrics.height / 2 - offsetY,
-                Card.CARD_WIDTH, Card.CARD_HEIGHT);
         cards.add(c);
         scene.add(MainScene.Layer.Card, c);
         return c;
@@ -56,8 +62,7 @@ public class CardManager implements IGameObject {
         feedVillager.update(elapsedSeconds);
         RecipeManager.recipeManager.update(elapsedSeconds);
         for(Card c : RecipeManager.recipeManager.generatedCards){
-            cards.add(c);
-            scene.add(MainScene.Layer.Card, c);
+            addCard(c);
         }
         RecipeManager.recipeManager.generatedCards.clear();
 

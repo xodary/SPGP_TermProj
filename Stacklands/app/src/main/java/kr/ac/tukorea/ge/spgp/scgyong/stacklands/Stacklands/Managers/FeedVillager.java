@@ -24,6 +24,11 @@ class FoodForVillager {
         foods.add(food);
         if(this.satiety >= 2) isEnough = true;
     }
+
+    public void reset(){
+        satiety = 0;
+        isFull = false;
+    }
 }
 public class FeedVillager implements IGameObject {
     public static FeedVillager feedVillager;
@@ -31,17 +36,13 @@ public class FeedVillager implements IGameObject {
     static float FEEDTIME = 2.f;
     float spendedTime = 0.0f;
     ArrayList<FoodForVillager> foodForVillager = new ArrayList<>();
+    ArrayList<OrangeCard> foods = new ArrayList<>();
 
     public FeedVillager(){ feedVillager = this; }
     public void addVillager(Card v){
         foodForVillager.add(new FoodForVillager(v));
     }
-    public void addFood(Card f){
-        for(FoodForVillager villager : foodForVillager) {
-            if(!villager.isEnough)
-                villager.Feed((OrangeCard)f);
-        }
-    }
+    public void addFood(Card f){ foods.add((OrangeCard)f); }
 
     public void update(float elapsedSeconds) {
         if(timerStart) {
@@ -68,6 +69,10 @@ public class FeedVillager implements IGameObject {
                 return;
             }
             timerStart = false;
+            for(FoodForVillager villager : foodForVillager){
+                villager.reset();
+                foods.removeAll(villager.foods);
+            }
             GameTimer.gameTimer.reset();
         }
     }
@@ -79,6 +84,11 @@ public class FeedVillager implements IGameObject {
 
     public void startFeeding(){
         timerStart = true;
+        int i = 0;
+        for(FoodForVillager villager : foodForVillager) {
+            while(!villager.isEnough)
+                villager.Feed(foods.get(i++));
+        }
         for(FoodForVillager villager : foodForVillager){
             for(OrangeCard food : villager.foods){
                 food.originX = food.getX();
