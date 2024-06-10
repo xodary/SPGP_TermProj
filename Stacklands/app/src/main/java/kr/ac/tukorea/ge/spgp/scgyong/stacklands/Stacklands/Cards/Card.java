@@ -24,7 +24,9 @@ public class Card extends Sprite implements IBoxCollidable {
         super(mipmapID);
         this.name = name;
         this.color = color;
-        setPosition(Metrics.width / 2, Metrics.height / 2, CARD_WIDTH, CARD_HEIGHT);
+        this.width = CARD_WIDTH;
+        this.height = CARD_HEIGHT;
+        setPosition(Metrics.width / 2, Metrics.height / 2, this.width, this.height);
     }
 
     Paint paint;
@@ -55,17 +57,7 @@ public class Card extends Sprite implements IBoxCollidable {
     public boolean clicking = false;
     public boolean collided = false;
     public boolean onTouch(MotionEvent event) {
-        float[] pts = Metrics.fromScreen(event.getX(), event.getY());
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                // isContains(x, y)
-                return false;
-            case MotionEvent.ACTION_MOVE:
-                if(!clicking) return false;
-                setPosition(pts[0] + click_offset[0], pts[1] + click_offset[1], CARD_WIDTH, CARD_HEIGHT);
-                return true;
-        }
-        return false;
+        return true;
     }
 
     public boolean isContains(float x, float y){
@@ -79,7 +71,7 @@ public class Card extends Sprite implements IBoxCollidable {
 
     @Override
     public void collide(Card collidedCard, int n) {
-        setPosition(collidedCard.getX(), collidedCard.getY() + CARD_OFFSET * (n+1), CARD_WIDTH, CARD_HEIGHT);
+        setPosition(collidedCard.getX(), collidedCard.getY() + CARD_OFFSET * (n+1), this.width, this.height);
     }
 
     @Override
@@ -89,6 +81,9 @@ public class Card extends Sprite implements IBoxCollidable {
 
     public String getName() {
         return name;
+    }
+
+    public void click() {
     }
 }
 

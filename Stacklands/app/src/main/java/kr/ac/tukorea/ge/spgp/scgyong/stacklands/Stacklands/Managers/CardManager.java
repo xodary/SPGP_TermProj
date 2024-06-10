@@ -11,6 +11,7 @@ import kr.ac.tukorea.ge.spgp.scgyong.framework.interfaces.IGameObject;
 import kr.ac.tukorea.ge.spgp.scgyong.framework.scene.Scene;
 import kr.ac.tukorea.ge.spgp.scgyong.framework.util.CollisionHelper;
 import kr.ac.tukorea.ge.spgp.scgyong.framework.view.Metrics;
+import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.BoosterPack;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.Card;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.MainScene;
 
@@ -26,19 +27,18 @@ public class CardManager implements IGameObject {
     public CardManager(MainScene scene) {
         cardManager = this;
         this.scene = scene;
-        // cards.add(CardGenerator.getInstance().CreateCard("boosterPack_ANewWorld"));
-        addCard("boosterPack_ANewWorld",0,0);
-        addCard("flint",3,0);
-        addCard("villager",0,5);
-        addCard("berry_bush",-3,0);
-        addCard("berry",-3,-5);
-        addCard("berry",-2,-5);
+        addBoosterPack("boosterPack_ANewWorld",0,0);
+        //addCard("flint",3,0);
+        //addCard("villager",0,5);
+        //addCard("berry_bush",-3,0);
+        //addCard("berry",-3,-5);
+        //addCard("berry",-2,-5);
     }
-    public Card addCard(String str, float offsetX, float offsetY){
+    public Card addBoosterPack(String str, float offsetX, float offsetY) {
         Card c = CardGenerator.getInstance().CreateCard(str);
 
         c.setPosition(Metrics.width / 2 - offsetX, Metrics.height / 2 - offsetY,
-                Card.CARD_WIDTH, Card.CARD_HEIGHT);
+                BoosterPack.BOOSTERPACK_WIDTH, BoosterPack.BOOSTERPACK_HEIGHT);
         addCard(c);
         return c;
     }
@@ -95,16 +95,30 @@ public class CardManager implements IGameObject {
     public boolean onTouch(MotionEvent event) {
         float[] pts = Metrics.fromScreen(event.getX(), event.getY());
         switch (event.getAction()){
+            case MotionEvent.ACTION_BUTTON_PRESS:
+                for (int i = cards.size() - 1; i >= 0; i--) {
+                    Card c = cards.get(i);
+                    if (c.isContains(pts[0], pts[1])) {
+                        c.click();
+                    }
+                }
+                return true;
             case MotionEvent.ACTION_UP:
                 if (!clickingCard.isEmpty()) {
-                    Card c = isCollided();
-                    if(c != null) {
-                        for (int i = 0; i < clickingCard.size(); ++i) {
-                            clickingCard.get(i).collide(c, i);
-                            clickingCard.get(i).clicking = false;
-                        }
+                    if(clickingCard.size() == 1 && clickingCard.get(0).color == "BoosterPack") {
+                        if(event.getEventTime() - event.getDownTime() < 200)
+                            clickingCard.get(0).click();
                     }
-                    RecipeManager.recipeManager.findRecipe(c, clickingCard);
+                    else {
+                        Card c = isCollided();
+                        if (c != null) {
+                            for (int i = 0; i < clickingCard.size(); ++i) {
+                                clickingCard.get(i).collide(c, i);
+                                clickingCard.get(i).clicking = false;
+                            }
+                        }
+                        RecipeManager.recipeManager.findRecipe(c, clickingCard);
+                    }
                     clickingCard.removeAll(clickingCard);
                     return true;
                 }
@@ -130,7 +144,7 @@ public class CardManager implements IGameObject {
                         clickingCard.get(i).setPosition(
                                 pts[0] + clickingCard.get(0).click_offset[0],
                                 pts[1] + clickingCard.get(0).click_offset[1] + Card.CARD_OFFSET * i,
-                                        Card.CARD_WIDTH, Card.CARD_HEIGHT);
+                                clickingCard.get(0).width, clickingCard.get(0).height);
                     Card c = isCollided();
                     if(c != null) c.collided();
                     return true;
