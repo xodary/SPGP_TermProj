@@ -57,7 +57,7 @@
             android:layout_width="250dp"
             android:layout_height="80dp"
             android:fontFamily="sans-serif-condensed"
-            android:onClick="onBtnStartGame"
+            android:onClick="onBtnExitGame"
             android:shadowColor="#BEBEBE"
             android:shadowDx="3"
             android:shadowDy="3"

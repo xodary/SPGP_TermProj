@@ -24,4 +24,5 @@ public class GameoverActivity extends AppCompatActivity {
     public void onBtnStartGame(View view) {
         startGameActivity();
     }
+    public void onBtnExitGame(View view){System.exit(0);}
 }

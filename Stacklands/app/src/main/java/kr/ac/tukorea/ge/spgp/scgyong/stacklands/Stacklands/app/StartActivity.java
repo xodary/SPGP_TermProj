@@ -24,4 +24,5 @@ public class StartActivity extends AppCompatActivity {
     public void onBtnStartGame(View view) {
         startGameActivity();
     }
+    public void onBtnExitGame(View view){finishAndRemoveTask();}
 }

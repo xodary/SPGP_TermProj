@@ -187,4 +187,12 @@ public class RecipeManager implements IGameObject {
         mainSceneCards.add(c);
         return mainSceneCards;
     }
+
+    public void removeCard(Card c) {
+        for(Dummy d : dummys){
+            if(d.materials.contains(c)) {
+                d.materials.remove(c);
+            }
+        }
+    }
 }

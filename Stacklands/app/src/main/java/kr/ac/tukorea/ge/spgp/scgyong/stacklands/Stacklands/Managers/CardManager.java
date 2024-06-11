@@ -2,7 +2,8 @@ package kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Managers;
 
 import android.graphics.Canvas;
 import android.graphics.RectF;
-import android.util.Log;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.view.MotionEvent;
 
 import java.util.ArrayList;
@@ -11,12 +12,12 @@ import kr.ac.tukorea.ge.spgp.scgyong.framework.interfaces.IGameObject;
 import kr.ac.tukorea.ge.spgp.scgyong.framework.scene.Scene;
 import kr.ac.tukorea.ge.spgp.scgyong.framework.util.CollisionHelper;
 import kr.ac.tukorea.ge.spgp.scgyong.framework.view.Metrics;
+import kr.ac.tukorea.ge.spgp.scgyong.stacklands.R;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.BoosterPack;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards.Card;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.MainScene;
 
 public class CardManager implements IGameObject {
-
     private static final String TAG = CardManager.class.getSimpleName();
     private final MainScene scene;
     private final ArrayList<Card> cards = new ArrayList<>();
@@ -24,15 +25,15 @@ public class CardManager implements IGameObject {
     public static CardManager cardManager;
     public RectF collisionBox = new RectF();
     public FeedVillager feedVillager = new FeedVillager();
+
+    private SoundPool soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);;
+    private int soundId;
+
     public CardManager(MainScene scene) {
         cardManager = this;
         this.scene = scene;
         addBoosterPack("boosterPack_ANewWorld",0,0);
-        //addCard("flint",3,0);
-        //addCard("villager",0,5);
-        //addCard("berry_bush",-3,0);
-        //addCard("berry",-3,-5);
-        //addCard("berry",-2,-5);
+        soundId = soundPool.load(scene.activity, R.raw.putdown, 1);
     }
     public Card addBoosterPack(String str, float offsetX, float offsetY) {
         Card c = CardGenerator.getInstance().CreateCard(str);
@@ -56,6 +57,7 @@ public class CardManager implements IGameObject {
     public void removeCard(Card c){
         cards.remove(c);
         scene.remove(MainScene.Layer.Card, c);
+        RecipeManager.recipeManager.removeCard(c);
     }
     @Override
     public void update(float elapsedSeconds) {
@@ -78,10 +80,6 @@ public class CardManager implements IGameObject {
 
     public void bringOnTop(ArrayList<Card> cardList) {
         Scene scene = Scene.top();
-        if (scene == null) {
-            Log.e(TAG, "Scene stack is empty in addToScene() " + this.getClass().getSimpleName());
-            return;
-        }
         cards.removeAll(cardList);
         cards.addAll(cardList);
         for(Card cc : cardList) {
@@ -92,26 +90,28 @@ public class CardManager implements IGameObject {
         }
     }
 
+    public void bringOnTop(Card c) {
+        Scene scene = Scene.top();
+        cards.remove(c);
+        cards.add(c);
+        scene.remove(MainScene.Layer.Card, c);
+        scene.add(MainScene.Layer.Card, c);
+    }
+
     public boolean onTouch(MotionEvent event) {
+        if(!GameTimer.gameTimer.isActive) return false;
         float[] pts = Metrics.fromScreen(event.getX(), event.getY());
         switch (event.getAction()){
-            case MotionEvent.ACTION_BUTTON_PRESS:
-                for (int i = cards.size() - 1; i >= 0; i--) {
-                    Card c = cards.get(i);
-                    if (c.isContains(pts[0], pts[1])) {
-                        c.click();
-                    }
-                }
-                return true;
             case MotionEvent.ACTION_UP:
                 if (!clickingCard.isEmpty()) {
                     if(clickingCard.size() == 1 && clickingCard.get(0).color == "BoosterPack") {
-                        if(event.getEventTime() - event.getDownTime() < 200)
+                        if (event.getEventTime() - event.getDownTime() < 200) {
                             clickingCard.get(0).click();
+                        }
                     }
                     else {
                         Card c = isCollided();
-                        if (c != null) {
+                        if (c != null && c.color != "BoosterPack") {
                             for (int i = 0; i < clickingCard.size(); ++i) {
                                 clickingCard.get(i).collide(c, i);
                                 clickingCard.get(i).clicking = false;
@@ -120,6 +120,7 @@ public class CardManager implements IGameObject {
                         RecipeManager.recipeManager.findRecipe(c, clickingCard);
                     }
                     clickingCard.removeAll(clickingCard);
+                    soundPool.play(soundId, 1, 1, 0, 0, 1);
                     return true;
                 }
                 return false;
@@ -169,6 +170,7 @@ public class CardManager implements IGameObject {
     }
 
     void GameOver(){
+        scene.popAll();
         scene.activity.overGameActivity();
     }
 }
