@@ -1,6 +1,8 @@
 package kr.ac.tukorea.ge.spgp.scgyong.framework.objects;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 
 import kr.ac.tukorea.ge.spgp.scgyong.framework.view.Metrics;
 
@@ -16,9 +18,14 @@ public class ScrollBackground extends Sprite {
     public void update(float elapsedSeconds) {
         this.x += speed * elapsedSeconds; // y 값을 스크롤된 양으로 사용한다
     }
-
+    Paint paint = null;
     @Override
     public void draw(Canvas canvas) {
+        if(paint == null) {
+            paint = new Paint();
+            paint.setColor(Color.rgb(144, 238, 144));
+            paint.setAlpha(64);
+        }
         //super.draw(canvas);
         float curr = x % width;
         if (curr > 0) curr -= width;
@@ -27,5 +34,6 @@ public class ScrollBackground extends Sprite {
             canvas.drawBitmap(bitmap, null, dstRect, null);
             curr += width;
         }
+        canvas.drawRect(0, 0, Metrics.width, Metrics.height, paint);
     }
 }

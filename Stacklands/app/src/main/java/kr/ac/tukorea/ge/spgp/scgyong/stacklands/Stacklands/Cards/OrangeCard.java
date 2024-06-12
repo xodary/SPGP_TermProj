@@ -10,4 +10,7 @@ public class OrangeCard extends Card {
         this.sell_price = sell_price;
         this.satiety = satiety;
     }
+    public int getPrice(){
+        return sell_price;
+    }
 }

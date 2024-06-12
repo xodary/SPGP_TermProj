@@ -1,17 +1,12 @@
 package kr.ac.tukorea.ge.spgp.scgyong.framework.scene;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.RectF;
 import android.util.Log;
 import android.view.MotionEvent;
 
 import java.util.ArrayList;
 
-import kr.ac.tukorea.ge.spgp.scgyong.stacklands.BuildConfig;
 import kr.ac.tukorea.ge.spgp.scgyong.framework.activity.GameActivity;
-import kr.ac.tukorea.ge.spgp.scgyong.framework.interfaces.IBoxCollidable;
 import kr.ac.tukorea.ge.spgp.scgyong.framework.interfaces.IGameObject;
 
 public class Scene {
@@ -120,26 +115,10 @@ public class Scene {
         }
     }
 
-    protected static Paint bboxPaint;
     public void draw(Canvas canvas) {
         for (ArrayList<IGameObject> objects: layers) {
             for (IGameObject gobj : objects) {
                 gobj.draw(canvas);
-            }
-        }
-        if (BuildConfig.DEBUG) {
-            if (bboxPaint == null) {
-                bboxPaint = new Paint();
-                bboxPaint.setStyle(Paint.Style.STROKE);
-                bboxPaint.setColor(Color.RED);
-            }
-            for (ArrayList<IGameObject> objects: layers) {
-                for (IGameObject gobj : objects) {
-                    if (gobj instanceof IBoxCollidable) {
-                        RectF rect = ((IBoxCollidable) gobj).getCollisionRect();
-                        canvas.drawRect(rect, bboxPaint);
-                    }
-                }
             }
         }
     }
@@ -177,9 +156,6 @@ public class Scene {
     public <E extends Enum<E>> void remove(E layer, IGameObject gameObject) {
         ArrayList<IGameObject> objects = layers.get(layer.ordinal());
         objects.remove(gameObject);
-//        if (gameObject instanceof IRecyclable) {
-//            RecycleBin.collect((IRecyclable) gameObject);
-//        }
     }
 
 }

@@ -84,5 +84,9 @@ public class Card extends Sprite implements IBoxCollidable {
 
     public void click() {
     }
+
+    public int getPrice() {
+        return -1;
+    }
 }
 

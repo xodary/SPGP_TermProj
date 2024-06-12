@@ -1,18 +1,14 @@
 package kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Cards;
 
-import android.animation.ValueAnimator;
-import android.view.animation.DecelerateInterpolator;
-
 import java.util.ArrayList;
 
-import kr.ac.tukorea.ge.spgp.scgyong.framework.view.Metrics;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Managers.CardGenerator;
 import kr.ac.tukorea.ge.spgp.scgyong.stacklands.Stacklands.Managers.CardManager;
 
 public class BoosterPack extends Card {
     public static float BOOSTERPACK_WIDTH = 2.3f;
     public static float BOOSTERPACK_HEIGHT = (float) 524 / 434 * BOOSTERPACK_WIDTH;
-    private int buyPrice;
+    public int buyPrice;
     protected final ArrayList<Card> cards = new ArrayList<>();
 
     final float width;
@@ -25,12 +21,29 @@ public class BoosterPack extends Card {
         this.height = BOOSTERPACK_HEIGHT;
 
         if (name == "boosterPack_ANewWorld") {
-            PushCard(CardGenerator.getInstance().CreateCard("wood"));
-            PushCard(CardGenerator.getInstance().CreateCard("rock"));
-            PushCard(CardGenerator.getInstance().CreateCard("berry_bush"));
-            PushCard(CardGenerator.getInstance().CreateCard("villager"));
-            PushCard(CardGenerator.getInstance().CreateCard("coin"));
-            PushCard(CardGenerator.getInstance().CreateCard("berry"));
+            PushCard(CardGenerator.getInstance().CreateCard("silver_wood"));
+            PushCard(CardGenerator.getInstance().CreateCard("black_rock"));
+            PushCard(CardGenerator.getInstance().CreateCard("black_berry_bush"));
+            PushCard(CardGenerator.getInstance().CreateCard("yellow_villager"));
+            PushCard(CardGenerator.getInstance().CreateCard("gold_coin"));
+            PushCard(CardGenerator.getInstance().CreateCard("orange_berry"));
+        }
+        if (name == "boosterPack_humble_beginnings") {
+            PushCard(CardGenerator.getInstance().CreateCard("silver_stone"));
+            PushCard(CardGenerator.getInstance().CreateCard("black_tree"));
+            PushCard(CardGenerator.getInstance().CreateCard("black_rock"));
+        }
+        if (name == "boosterPack_seeking_wisdom") {
+            PushCard(CardGenerator.getInstance().CreateCard("black_berry_bush"));
+            PushCard(CardGenerator.getInstance().CreateCard("silver_stick"));
+            PushCard(CardGenerator.getInstance().CreateCard("silver_wood"));
+            PushCard(CardGenerator.getInstance().CreateCard("black_rock"));
+        }
+        if (name == "boosterPack_reap_n_sow") {
+            PushCard(CardGenerator.getInstance().CreateCard("orange_apple"));
+            PushCard(CardGenerator.getInstance().CreateCard("black_rock"));
+            PushCard(CardGenerator.getInstance().CreateCard("black_tree"));
+            PushCard(CardGenerator.getInstance().CreateCard("black_berry_bush"));
         }
     }
 
@@ -39,27 +52,6 @@ public class BoosterPack extends Card {
         return this;
     }
 
-    protected ValueAnimator animator;
-
-    protected ValueAnimator getAnimator() {
-        if (animator != null) {
-            animator.end();
-            return animator;
-        }
-
-        float top = Metrics.height / 3;
-        float dst = top - dstRect.height();
-
-        animator = ValueAnimator.ofFloat(top, dst);
-        animator.setDuration(500);
-        animator.setInterpolator(new DecelerateInterpolator());
-        animator.addUpdateListener(updateListener);
-        return animator;
-    }
-    private final ValueAnimator.AnimatorUpdateListener updateListener = (anim)->{
-        float y = (Float)anim.getAnimatedValue();
-        dstRect.offsetTo(dstRect.left, y);
-    };
     public void click() {
         if(!cards.isEmpty()) {
             Card c = cards.get(0);

@@ -43,7 +43,11 @@ class Recipe {
         recipes.put(material_list, result);
     }
     public Recipe() {
-        addRecipe("berry",4,1.0f, "villager", "berry_bush");
+        addRecipe("orange_berry",4,3.0f, "yellow_villager", "black_berry_bush");
+        addRecipe("silver_stick",1,3.0f, "yellow_villager", "silver_wood");
+        addRecipe("silver_wood",4,3.0f, "yellow_villager", "tree");
+        addRecipe("silver_stone",4,3.0f, "yellow_villager", "black_rock");
+        addRecipe("silver_wood",4,3.0f, "yellow_villager", "black_tree");
     }
 
     public boolean inRecipe(Dummy dummy){
@@ -83,6 +87,7 @@ public class RecipeManager implements IGameObject {
         }
         if(remove != null) dummys.remove(remove);
 
+        Card removeCard = null;
         // 더미들을 검사한다.
         for(Dummy dummy : dummys){
             if(!dummy.isInRecipe) continue;
@@ -92,16 +97,15 @@ public class RecipeManager implements IGameObject {
                 dummy.spendedTime = dummy.fullTime;
                 Card c = dummy.result.get(dummy.result.size() - 1);
                 dummy.result.remove(dummy.result.size() - 1);
-                c.setPosition(dummy.materials.get(0).getX()+(dummy.result.size() - 1) * 1,
-                        dummy.materials.get(dummy.materials.size() - 1).getY() + 4,
+                c.setPosition(dummy.materials.get(0).getX()+(dummy.result.size() - 1) * 0.5f,
+                        dummy.materials.get(dummy.materials.size() - 1).getY() + 2.5f,
                         Card.CARD_WIDTH, Card.CARD_HEIGHT);
                 generatedCards.add(c);
                 if(dummy.result.isEmpty()) {
                     dummy.isInRecipe = false;
                     for(Card m : dummy.materials) {
-                        if (m.color != "Yellow") {
-                            CardManager.cardManager.removeCard(m);
-                            dummy.deleteCard.add(m);
+                        if (m.color == "Black" || m.color == "Silver") {
+                            removeCard = m;
                         }
                     }
                     dummy.materials.removeAll(dummy.deleteCard);
@@ -109,6 +113,7 @@ public class RecipeManager implements IGameObject {
                 }
             }
         }
+        CardManager.cardManager.removeCard(removeCard);
     }
 
     public void findRecipe(Card collided, ArrayList<Card> collides) {
@@ -192,6 +197,7 @@ public class RecipeManager implements IGameObject {
         for(Dummy d : dummys){
             if(d.materials.contains(c)) {
                 d.materials.remove(c);
+                return;
             }
         }
     }

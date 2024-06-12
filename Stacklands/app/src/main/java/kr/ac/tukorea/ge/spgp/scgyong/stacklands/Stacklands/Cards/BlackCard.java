@@ -7,5 +7,9 @@ public class BlackCard extends Card{
         super(mipmapID, name, "Black");
         this.sellPrice = sellPrice;
     }
+
+    public int getPrice() {
+        return sellPrice;
+    }
 }
 

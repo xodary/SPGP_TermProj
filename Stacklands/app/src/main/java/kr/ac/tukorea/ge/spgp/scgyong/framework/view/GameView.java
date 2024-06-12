@@ -98,17 +98,8 @@ public class GameView extends View implements Choreographer.FrameCallback {
         }
         canvas.save();
         Metrics.concat(canvas);
-        if (BuildConfig.DEBUG) {
-            canvas.drawRect(Metrics.borderRect, borderPaint);
-        }
         scene.draw(canvas);
         canvas.restore();
-
-        if (BuildConfig.DEBUG) {
-            int fps = (int) (1.0f / elapsedSeconds);
-            int count = scene.count();
-            canvas.drawText("FPS: " + fps + " objs: " + count, 100f, 200f, fpsPaint);
-        }
     }
 
     //////////////////////////////////////////////////

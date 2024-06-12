@@ -10,7 +10,7 @@ import kr.ac.tukorea.ge.spgp.scgyong.framework.view.Metrics;
 
 public class GameTimer implements IGameObject {
     public static GameTimer gameTimer;
-    static float TURNTIME = 20.f;
+    static float TURNTIME = 40.f;
     public boolean isActive = true;
     float spendedTime = 0.0f;
     int days = 1;

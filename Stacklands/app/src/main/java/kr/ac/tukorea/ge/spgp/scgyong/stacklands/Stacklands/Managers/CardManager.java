@@ -44,6 +44,13 @@ public class CardManager implements IGameObject {
         return c;
     }
 
+    public Card addBoosterPack(Card boosterPack){
+        boosterPack.setPosition(Metrics.width / 2, Metrics.height / 2,
+                BoosterPack.BOOSTERPACK_WIDTH, BoosterPack.BOOSTERPACK_HEIGHT);
+        addCard(boosterPack);
+        return boosterPack;
+    }
+
     public Card addCard(Card c){
         if(c.color == "Yellow")
             feedVillager.addVillager(c);
@@ -55,9 +62,11 @@ public class CardManager implements IGameObject {
     }
 
     public void removeCard(Card c){
+        if(c == null) return;
         cards.remove(c);
         scene.remove(MainScene.Layer.Card, c);
         RecipeManager.recipeManager.removeCard(c);
+        if(c.color == "Orange") FeedVillager.feedVillager.removeFood(c);
     }
     @Override
     public void update(float elapsedSeconds) {
@@ -110,14 +119,16 @@ public class CardManager implements IGameObject {
                         }
                     }
                     else {
-                        Card c = isCollided();
-                        if (c != null && c.color != "BoosterPack") {
-                            for (int i = 0; i < clickingCard.size(); ++i) {
-                                clickingCard.get(i).collide(c, i);
-                                clickingCard.get(i).clicking = false;
+                        if (!Market.market.GiveCard(clickingCard)) {
+                            Card c = isCollided();
+                            if (c != null && c.color != "BoosterPack") {
+                                for (int i = 0; i < clickingCard.size(); ++i) {
+                                    clickingCard.get(i).collide(c, i);
+                                    clickingCard.get(i).clicking = false;
+                                }
                             }
+                            RecipeManager.recipeManager.findRecipe(c, clickingCard);
                         }
-                        RecipeManager.recipeManager.findRecipe(c, clickingCard);
                     }
                     clickingCard.removeAll(clickingCard);
                     soundPool.play(soundId, 1, 1, 0, 0, 1);
@@ -157,11 +168,10 @@ public class CardManager implements IGameObject {
 
     public Card isCollided(){
         if(clickingCard.isEmpty()) return null;
-        for (int i = cards.size() - 1; i >= 0; i--){
+        for (int i = cards.size() - 1; i >= 0; i--) {
             Card c = cards.get(i);
             if(clickingCard.contains(c)) continue;
             collisionBox = new RectF(clickingCard.get(0).getCollisionRect());
-            collisionBox.bottom = clickingCard.get(clickingCard.size()-1).getCollisionRect().bottom;
             if (CollisionHelper.collides(c, collisionBox)) {
                 return c;
             }

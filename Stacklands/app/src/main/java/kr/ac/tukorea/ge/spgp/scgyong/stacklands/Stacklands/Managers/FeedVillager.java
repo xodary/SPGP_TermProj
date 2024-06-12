@@ -50,6 +50,7 @@ public class FeedVillager implements IGameObject {
     public void addFood(Card f) {
         foods.add((OrangeCard) f);
     }
+    public void removeFood(Card f) {foods.remove(f);}
 
     int i = 0;
 
@@ -97,6 +98,7 @@ public class FeedVillager implements IGameObject {
     public void startFeeding() {
         timerStart = true;
         int i = 0;
+        if (foods.isEmpty()) CardManager.cardManager.GameOver();
         for (FoodForVillager villager : foodForVillager) {
             while (!villager.isEnough) {
                 if (foods.size() > i) villager.Feed(foods.get(i++));

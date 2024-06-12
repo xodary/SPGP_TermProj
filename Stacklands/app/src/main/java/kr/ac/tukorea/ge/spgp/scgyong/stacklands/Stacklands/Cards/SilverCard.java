@@ -7,4 +7,7 @@ public class SilverCard extends Card {
         super(mipmapID, name, "Silver");
         this.sellPrice = sellPrice;
     }
+    public int getPrice(){
+        return sellPrice;
+    }
 }
